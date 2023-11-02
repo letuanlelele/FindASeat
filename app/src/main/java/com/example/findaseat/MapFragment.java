@@ -116,10 +116,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         );
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(campusBounds, 100));
         // Add markers for buildings and set click listeners
-        fetchBuildingData();
-        addBuildingMarkers();
+//        fetchBuildingData();
+//        addBuildingMarkers();
         LatLng Fertitta = new LatLng(34.01887742105534, -118.28238833775792);
-        mMap.addMarker(new MarkerOptions().position(Fertitta).title("Marker"));
+        mMap.addMarker(new MarkerOptions().position(Fertitta).title("Fertitta"));
     }
 
 
