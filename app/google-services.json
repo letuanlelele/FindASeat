@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "751510911384",
-    "project_id": "findaseat-2804a",
-    "storage_bucket": "findaseat-2804a.appspot.com"
+    "project_number": "237762613092",
+    "project_id": "firestoredemo-7859c",
+    "storage_bucket": "firestoredemo-7859c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:751510911384:android:460f7976bb3b294fb053ed",
+        "mobilesdk_app_id": "1:237762613092:android:68c5d75459c3c9a107b471",
         "android_client_info": {
           "package_name": "com.example.findaseat"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAdwfopK57FyZyoLrSn39A15v0r3DCRR7A"
+          "current_key": "AIzaSyDMdnuN4o4BHAPOAzqxyxZ92KrzuwLa4Fw"
         }
       ],
       "services": {
