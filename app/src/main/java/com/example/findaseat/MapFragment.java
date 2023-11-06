@@ -123,6 +123,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(campusBounds, 100));
         // Create buildings + Add markers for buildings and set click listeners
         hardCodeBuildings();
+
     }
 
 
@@ -157,6 +158,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 //                                String ID = document.getId();
 //                                building.setDocument_id(ID);
 //                                building.setBuilding_id(document.get("building_id").toString());
+                                String test = document.get("building_id").toString();
+                                Toast.makeText(getActivity(), test, Toast.LENGTH_SHORT).show();
 //                                building.setDescription(document.getString("description"));
 //                                building.setLatitude(document.getDouble("latitude"));
 //                                building.setLongitude(document.getDouble("longitude"));
