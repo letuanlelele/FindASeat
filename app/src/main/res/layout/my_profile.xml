@@ -33,7 +33,7 @@
         android:layout_below="@id/my_profile"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:src="@drawable/cat" />
+         />
 
     <TextView
         android:id="@+id/name_text"
@@ -42,7 +42,7 @@
         android:layout_below="@id/profile_image"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:text="Meow Meow"
+        android:text=""
         android:textSize="24sp"
         android:textStyle="bold" />
 
@@ -53,7 +53,7 @@
         android:layout_below="@id/name_text"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:text="USC ID: 123456789"
+        android:text=""
         android:textSize="18sp" />
 
 
@@ -64,7 +64,7 @@
         android:layout_below="@id/uscid_text"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:text="Student"
+        android:text=""
         android:textSize="18sp" />
 
     <Button

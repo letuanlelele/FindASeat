@@ -1,76 +1,65 @@
 package com.example.findaseat;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import javax.annotation.Nullable;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+///**
+// * A simple {@link Fragment} subclass.
+// * Use the {@link ProfileFragment#newInstance} factory method to
+// * create an instance of this fragment.
+// */
 public class ProfileFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String username;
+    private String name;
+    private String USC_id;
+    private String affiliation;
+    private String userImage;
+    private View rootView;
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference users = db.collection("users");
 
     public ProfileFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     @Nullable
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView;
         boolean isLoggedIn = ((MainActivity) requireActivity()).isLoggedIn();
 
         rootView = inflater.inflate(R.layout.my_profile, container, false);
         Button manageReservationsButton = rootView.findViewById(R.id.manage_reservation_button);
         Button logoutButton = rootView.findViewById(R.id.logout_button);
+
+        startFireStore();
 
         manageReservationsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,4 +104,46 @@ public class ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         return rootView;
     }
-}
+
+    private void startFireStore() {
+        username = ((MainActivity) requireActivity()).getUsername();
+        DocumentReference docRef = db.collection("users").document(username);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "Found document");
+                        name = document.getString("name");
+                        USC_id = document.getString("USC_id");
+                        affiliation = document.getString("affiliation");
+                        userImage = document.getString("image");
+//                        Toast.makeText(getActivity(), userImage, Toast.LENGTH_SHORT).show();
+
+                        TextView nameTextView = rootView.findViewById(R.id.name_text);
+                        TextView uscidTextView = rootView.findViewById(R.id.uscid_text);
+                        TextView affiliationTextView = rootView.findViewById(R.id.affiliation);
+                        ImageView userImageView = rootView.findViewById(R.id.profile_image);
+                        int imageResource = getResources().getIdentifier(userImage, "drawable", requireContext().getPackageName());
+                        //userImageView.setImageResource(R.drawable.cat1);
+
+                        String display_uscid = "USC ID: " + USC_id;
+
+                        nameTextView.setText(name);
+                        uscidTextView.setText(display_uscid);
+                        affiliationTextView.setText(affiliation);
+                        userImageView.setImageResource(imageResource);
+
+
+                    } else {
+                        Log.d(TAG, "No such document");
+
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+        }
+    }

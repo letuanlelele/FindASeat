@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;    // nav_menu
     private boolean isLoggedIn = false;
+    private String username;
 
     public void setLoggedIn(boolean loggedIn) {
         isLoggedIn = loggedIn;
@@ -27,6 +28,14 @@ public class MainActivity extends AppCompatActivity {
 
     public boolean isLoggedIn() {
         return isLoggedIn;
+    }
+
+    public void setUsername(String user_name){
+        username = user_name;
+    }
+
+    public String getUsername(){
+        return username;
     }
 
     @Override
