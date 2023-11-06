@@ -156,6 +156,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 //        BuildingInfo.document("Leavey").set(data1);
 //    }
 
+
     private void startFireStore() {
 //        insertLeavey();
         BuildingInfo

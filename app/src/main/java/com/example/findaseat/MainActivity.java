@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
     // nav_menu
     private void replaceFragment(Fragment fragment) {
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
