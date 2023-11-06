@@ -36,6 +36,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/current_reservation_content" />
 
+
     <View
         android:id="@+id/divider"
         android:layout_width="0dp"

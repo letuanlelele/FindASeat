@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
         // google maps
 //        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map);
 //        mapFragment.getMapAsync(this);
-
     }
 
     // nav_menu
