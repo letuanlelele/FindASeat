@@ -107,16 +107,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
-//        fetchBuildingData();
     }
 
-//    @Override
-//    public void onMapReady(@NonNull GoogleMap googleMap) {
-//        mMap = googleMap;
-//    }
-
     // Used for importing Google Map
-    // Set bounds to confine the map to the campus
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
@@ -128,13 +121,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 new LatLng(34.025442742634105, -118.28045999644873)        // Top right corner
         );
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(campusBounds, 100));
-        // Add markers for buildings and set click listeners
+        // Create buildings + Add markers for buildings and set click listeners
         hardCodeBuildings();
-//        startFireStore();
-//        addBuildingMarkers();
-
-//        LatLng Fertitta = new LatLng(34.01887742105534, -118.28238833775792);
-//        mMap.addMarker(new MarkerOptions().position(Fertitta).title("Fertitta"));
     }
 
 
@@ -157,7 +145,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 //    }
 
     private void startFireStore() {
-//        insertLeavey();
         BuildingInfo
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -184,75 +171,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 //                                mMap.addMarker(new MarkerOptions().position(position).title(building.getBuilding_id()));
 
                                 Log.d(TAG, document.getId() + " => " + document.getData());
-//                                String latitude = Double.toString(building.getLatitude());
-//                                Toast.makeText(getActivity(), building.getDescription(), Toast.LENGTH_SHORT).show();
-//                                Toast.makeText(getActivity(), building.getBuilding_id(), Toast.LENGTH_SHORT).show();
                             }
-//                            Toast.makeText(getActivity(), "onComplete sucess", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "onComplete sucess", Toast.LENGTH_SHORT).show();
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            Log.d(TAG, "onComplete NOT sucess: ", task.getException());
                             Toast.makeText(getActivity(), "onComplete NOT sucess", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
-//        if (!buildingInfoMap.isEmpty()) {
-//            Toast.makeText(getActivity(), "not empty", Toast.LENGTH_SHORT).show();
-//        }
     }
 
-
-    /////////////// FIRESTORE SHIT ///////////////
-
-
-
-    private void addBuildingMarkers() {
-//        Toast.makeText(getActivity(), "in the function", Toast.LENGTH_SHORT).show();
-//        BuildingInfo specific = buildingInfoMap.get("Leavey");
-//        if (specific != null) {
-//            Toast.makeText(getActivity(), specific.getBuilding_id(), Toast.LENGTH_SHORT).show();
-//        }
-        for (BuildingInfo building : buildingInfoMap.values()) {
-            Toast.makeText(getActivity(), "in the for loop for addBuilding", Toast.LENGTH_SHORT).show();
-            LatLng position = new LatLng(building.getLatitude(), building.getLongitude());
-//            mMap.addMarker(new MarkerOptions().position(position).title(building.getDocument_id()));
-            Marker marker = mMap.addMarker(new MarkerOptions().position(position).title(building.getBuilding_id()));
-            marker.setTag(building.getBuilding_id());
-
-
-            String latitude = Double.toString(building.getLatitude());
-            Toast.makeText(getActivity(), latitude, Toast.LENGTH_SHORT).show();
-        }
-
-        mMap.setOnMarkerClickListener(marker -> {
-            String buildingId = (String) marker.getTag();
-            handleBuildingClick(buildingId);
-            return false;
-        });
-    }
-
-
-
-
-    private void displayBuildingInfo(String buildingName, String description) {
-        // Instead of using BottomSheetDialog
-        // Consider using Dialog
-
-
-
-        // Create a new BottomSheetDialog
-        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.building_info_layout, null);
-        bottomSheetDialog.setContentView(view);
-
-        // Set the building's information to the views
-        TextView nameTextView = view.findViewById(R.id.building_name);
-        TextView descriptionTextView = view.findViewById(R.id.building_description);
-        nameTextView.setText(buildingName);
-        descriptionTextView.setText(description);
-
-        // Show the BottomSheetDialog
-        bottomSheetDialog.show();
-    }
 
     private void hardCodeBuildings() {
         BuildingInfo building1 = new BuildingInfo();
@@ -262,10 +190,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building1.setLongitude(-118.28292515212222);
         // Put building in hashmap
         buildingInfoMap.put(building1.getBuilding_id(), building1);
-        // Put marker for building on map
-//        LatLng position1 = new LatLng(building1.getLatitude(), building1.getLongitude());
-//        Marker marker1 = mMap.addMarker(new MarkerOptions().position(position1).title(building1.getBuilding_id()));
-//        marker1.setTag(building1.getBuilding_id());
 
 
         BuildingInfo building2 = new BuildingInfo();
@@ -275,10 +199,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building2.setLongitude(-118.28240971952378);
         // Put building in hashmap
         buildingInfoMap.put(building2.getBuilding_id(), building2);
-        // Put marker for building on map
-//        LatLng position2 = new LatLng(building2.getLatitude(), building2.getLongitude());
-//        Marker marker2 = mMap.addMarker(new MarkerOptions().position(position2).title(building2.getBuilding_id()));
-//        marker2.setTag(building2.getBuilding_id());
 
 
         BuildingInfo building3 = new BuildingInfo();
@@ -288,10 +208,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building3.setLongitude(-118.28390788352026);
         // Put building in hashmap
         buildingInfoMap.put(building3.getBuilding_id(), building3);
-        // Put marker for building on map
-//        LatLng position3 = new LatLng(building3.getLatitude(), building3.getLongitude());
-//        Marker marker3 = mMap.addMarker(new MarkerOptions().position(position3).title(building3.getBuilding_id()));
-//        marker3.setTag(building3.getBuilding_id());
 
 
         BuildingInfo building4 = new BuildingInfo();
@@ -301,10 +217,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building4.setLongitude(-118.28682006643406);
         // Put building in hashmap
         buildingInfoMap.put(building4.getBuilding_id(), building4);
-        // Put marker for building on map
-//        LatLng position4 = new LatLng(building4.getLatitude(), building4.getLongitude());
-//        Marker marker4 = mMap.addMarker(new MarkerOptions().position(position4).title(building4.getBuilding_id()));
-//        marker4.setTag(building4.getBuilding_id());
 
 
         BuildingInfo building5 = new BuildingInfo();
@@ -314,10 +226,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building5.setLongitude(-118.28989707852968);
         // Put building in hashmap
         buildingInfoMap.put(building5.getBuilding_id(), building5);
-        // Put marker for building on map
-//        LatLng position5 = new LatLng(building5.getLatitude(), building5.getLongitude());
-//        Marker marker5 = mMap.addMarker(new MarkerOptions().position(position5).title(building5.getBuilding_id()));
-//        marker5.setTag(building5.getBuilding_id());
 
 
         BuildingInfo building6 = new BuildingInfo();
@@ -364,6 +272,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         // Put building in hashmap
         buildingInfoMap.put(building10.getBuilding_id(), building10);
 
+
+        // Insert markers on map
         for (BuildingInfo building : buildingInfoMap.values()) {
             LatLng position = new LatLng(building.getLatitude(), building.getLongitude());
             Marker marker = mMap.addMarker(new MarkerOptions().position(position).title(building.getBuilding_id()));
@@ -398,8 +308,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             bottomSheetDialog.show();
         }
     }
-
-
 
 
     public class BuildingInfo {
@@ -442,8 +350,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         public void setLongitude(double longitude) {
             this.longitude = longitude;
         }
-
-        // Getters and setters for all fields
     }
 
 }
