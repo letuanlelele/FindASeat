@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/buildingNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="YOUR_BUILDING_NAME"
+        android:textSize="24sp"
+        android:gravity="center"
+        />
+
+    <Button
+        android:id="@+id/datePickerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buildingNameTextView"
+        android:text="Select Date" />
+
+    <Spinner
+        android:id="@+id/startTimeSpinner"
+        android:minHeight="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/datePickerButton"
+        android:layout_marginTop="25dp" />
+
+    <Spinner
+        android:id="@+id/endTimeSpinner"
+        android:minHeight="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/startTimeSpinner"
+        android:layout_marginTop="10dp" />
+
+    <GridLayout
+        android:id="@+id/seatGrid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/endTimeSpinner"
+        android:layout_marginTop="2dp"
+        android:columnCount="3"
+        android:rowCount="4" />
+
+    <Button
+        android:id="@+id/bookButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/seatGrid"
+        android:layout_marginTop="566dp"
+        android:text="Book" />
+</RelativeLayout>
