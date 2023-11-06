@@ -19,6 +19,15 @@ import com.google.firebase.FirebaseApp;
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;    // nav_menu
+    private boolean isLoggedIn = false;
+
+    public void setLoggedIn(boolean loggedIn) {
+        isLoggedIn = loggedIn;
+    }
+
+    public boolean isLoggedIn() {
+        return isLoggedIn;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +43,11 @@ public class MainActivity extends AppCompatActivity {
             if (itemId == R.id.navigation_map) {
                 replaceFragment(new MapFragment());
             } else if (itemId == R.id.navigation_profile) {
-                replaceFragment(new ProfileFragment());
+                if (isLoggedIn) {
+                    replaceFragment(new ProfileFragment());
+                } else {
+                    replaceFragment(new LoginFragment());
+                }
             }
             return true;
         });
@@ -45,11 +58,11 @@ public class MainActivity extends AppCompatActivity {
         // google maps
 //        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map);
 //        mapFragment.getMapAsync(this);
-
     }
 
     // nav_menu
     private void replaceFragment(Fragment fragment) {
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);

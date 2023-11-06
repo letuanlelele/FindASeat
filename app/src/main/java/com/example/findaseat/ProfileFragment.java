@@ -1,12 +1,18 @@
 package com.example.findaseat;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import javax.annotation.Nullable;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,9 +62,57 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
+    @Nullable
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View rootView;
+        boolean isLoggedIn = ((MainActivity) requireActivity()).isLoggedIn();
+
+        rootView = inflater.inflate(R.layout.my_profile, container, false);
+        Button manageReservationsButton = rootView.findViewById(R.id.manage_reservation_button);
+        Button logoutButton = rootView.findViewById(R.id.logout_button);
+
+        manageReservationsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ManageReservationFragment manageReservationsFragment = new ManageReservationFragment();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.frame_layout, manageReservationsFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create and show a confirmation dialog
+                new AlertDialog.Builder(requireContext())
+                        .setTitle("Confirm Logout")
+                        .setMessage("Are you sure you want to logout?")
+                        .setPositiveButton("Logout", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // User confirmed the logout
+                                ((MainActivity) requireActivity()).setLoggedIn(false);
+
+                                LoginFragment loginFragment = new LoginFragment();
+                                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                                transaction.replace(R.id.frame_layout, loginFragment);
+                                transaction.commit();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // User canceled the logout, do nothing
+                            }
+                        })
+                        .show();
+            }
+        });
+
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        return rootView;
     }
 }
