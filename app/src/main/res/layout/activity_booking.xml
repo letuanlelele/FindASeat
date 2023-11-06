@@ -45,7 +45,4 @@
         android:text="Selected Time: "
         android:textSize="18sp"
         />
-
-    <!-- Add additional UI elements for user confirmation and any other details as needed -->
-
 </RelativeLayout>

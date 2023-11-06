@@ -1,4 +1,4 @@
-package com.example.a310_test;
+package com.example.findaseat;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -17,6 +18,9 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,18 +31,9 @@ import java.util.List;
 import java.util.Locale;
 
 public class BuildingPage extends AppCompatActivity {
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    private TextView buildingNameTextView;
     private Button datePickerButton;
-    private HorizontalScrollView seatScrollView;
-    private LinearLayout seatContainer;
-    private Button bookButton;
-
-    private String selectedDate;
-    private List<Button> seatButtons = new ArrayList<>();
-    private List<Button> timeButtons = new ArrayList<>();
-    private int maxConsecutiveSelection = 4;
-
     private Spinner startTimeSpinner;
     private Spinner endTimeSpinner;
     private GridLayout seatGrid;
@@ -47,25 +42,45 @@ public class BuildingPage extends AppCompatActivity {
     private String selectedStartTime;
     private String selectedEndTime;
     private String selectedSeat;
+    private String selectedDate;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
+        Intent intent = getIntent();
 
-        selectedBuilding = "Your Building";
+        // set building name text
+        selectedBuilding = intent.getStringExtra("buildingID");
+        TextView buildingNameTextView = findViewById(R.id.buildingNameTextView);
+        buildingNameTextView.setText(selectedBuilding);
+
+        // set building description text
+        String buildingDescription = intent.getStringExtra("buildingDescription");
+        TextView buildingDescriptionTextView = findViewById(R.id.buildingDescriptionText);
+        buildingDescriptionTextView.setText(buildingDescription);
+        Log.d("myInfoTag", "Building description is: " + buildingDescription);
+
+        // set building opening time text
+        int buildingOpeningTime = intent.getIntExtra("buildingOpening", 900);
+        TextView buildingOpeningTextView = findViewById(R.id.buildingOpeningText);
+        buildingOpeningTextView.setText("Closing Time: " + buildingOpeningTime);
+
+        // set building opening time text
+        int buildingClosingTime = intent.getIntExtra("buildingClosing", 2400);
+        TextView buildingClosingTextView = findViewById(R.id.buildingClosingText);
+        buildingClosingTextView.setText("Opening Time: " + buildingClosingTime);
+
         datePickerButton = findViewById(R.id.datePickerButton);
         startTimeSpinner = findViewById(R.id.startTimeSpinner);
         endTimeSpinner = findViewById(R.id.endTimeSpinner);
         seatGrid = findViewById(R.id.seatGrid);
-        buildingNameTextView = findViewById(R.id.buildingNameTextView);
-        bookButton = findViewById(R.id.bookButton);
 
         // Add a click listener for the date picker button to show a calendar dialog
         datePickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Implement date picker dialog
                 showDatePickerDialog();
             }
         });
@@ -97,7 +112,7 @@ public class BuildingPage extends AppCompatActivity {
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                        selectedDate = year + "-" + (month + 1) + "-" + day; // Format the selected date
+                        selectedDate = (month + 1) + "-" + day + "-" + year; // Format the selected date
                         datePickerButton.setText(selectedDate);
                     }
                 },
@@ -189,39 +204,44 @@ public class BuildingPage extends AppCompatActivity {
         // Calculate the end time as 2 hours after the selected start time
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(startTime);
-        calendar.add(Calendar.HOUR, 2);
 
         // Populate the end time spinner with intervals starting from the selected start time
         List<String> endTimeIntervals = new ArrayList<>();
-        endTimeIntervals.add(selectedStartTime); // Add the selected start time
-        while (calendar.getTime().before(sdf.getCalendar().getTime())) {
-            endTimeIntervals.add(sdf.format(calendar.getTime()));
+        int count = 0;
+        // begin endTime starting 30 minutes after
+        calendar.add(Calendar.MINUTE, 30);
+        while (count < 4) {
+            endTimeIntervals.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
             calendar.add(Calendar.MINUTE, 30);
+            count++;
         }
 
         ArrayAdapter<String> endTimeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, endTimeIntervals);
         endTimeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         endTimeSpinner.setAdapter(endTimeAdapter);
-    }
 
-//    private void openBookingPage() {
-//        Intent intent = new Intent(MainActivity.this, BookingActivity.class);
-//        intent.putExtra("selectedDate", selectedDate);
-//
-//        // Assuming you have variables to store the selected seat and time
-//        // Replace "selectedSeat" and "selectedTime" with your actual variables
-//        Button seatButton = findViewById(R.id.seatButton);
-//        String seatValue = seatButton.getText().toString();
-//        intent.putExtra("selectedSeat", seatValue);
-//        Button timeButton = findViewById(R.id.timeButton);
-//        String timeValue = timeButton.getText().toString();
-//        intent.putExtra("selectedTime", timeValue);
-//
-//        startActivity(intent);
-//    }
+        endTimeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // Get the selected end time
+                selectedEndTime = endTimeAdapter.getItem(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedEndTime = "No end time selected";
+            }
+        });
+    }
 
     private void openBookingPage() {
         Intent intent = new Intent(BuildingPage.this, BookingActivity.class);
+        Log.i("myInfoTag" , "selected date is:" + selectedDate);
+        Log.i("myInfoTag" , "selected building is:" +selectedBuilding);
+        Log.i("myInfoTag" , "selected start time is:" + selectedStartTime);
+        Log.i("myInfoTag" , "selected end time is:" + selectedEndTime);
+        Log.i("myInfoTag" , "selected seat is:" + selectedSeat);
+        intent.putExtra("selectedDate", selectedDate);
         intent.putExtra("selectedBuilding", selectedBuilding);
         intent.putExtra("selectedStartTime", selectedStartTime);
         intent.putExtra("selectedEndTime", selectedEndTime);

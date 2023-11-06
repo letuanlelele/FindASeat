@@ -15,20 +15,62 @@
         android:gravity="center"
         />
 
+    <TextView
+        android:id="@+id/buildingDescriptionText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buildingNameTextView"
+        android:layout_marginTop="20dp"
+        android:text="This is the building description"
+        android:textSize="16dp" />
+
+    <TextView
+        android:id="@+id/buildingOpeningText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buildingDescriptionText"
+        android:text="Opening Time:"
+        android:textSize="16dp" />
+
+    <TextView
+        android:id="@+id/buildingClosingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buildingOpeningText"
+        android:text="Closing Time:"
+        android:textSize="16dp" />
+
     <Button
         android:id="@+id/datePickerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/buildingNameTextView"
+        android:layout_below="@id/buildingClosingText"
+        android:layout_marginTop="20dp"
         android:text="Select Date" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Time:"
+        android:textSize="16sp"
+        android:layout_marginTop="23dp"
+        android:layout_below="@id/datePickerButton"/>
     <Spinner
         android:id="@+id/startTimeSpinner"
         android:minHeight="48dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/datePickerButton"
-        android:layout_marginTop="25dp" />
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="80dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="End Time:"
+        android:textSize="16sp"
+        android:layout_marginTop="23dp"
+        android:layout_below="@id/startTimeSpinner"/>
 
     <Spinner
         android:id="@+id/endTimeSpinner"
@@ -36,7 +78,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/startTimeSpinner"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="80dp"/>
 
     <GridLayout
         android:id="@+id/seatGrid"
@@ -44,14 +87,14 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/endTimeSpinner"
         android:layout_marginTop="2dp"
-        android:columnCount="3"
+        android:columnCount="4"
         android:rowCount="4" />
 
     <Button
         android:id="@+id/bookButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/seatGrid"
-        android:layout_marginTop="566dp"
-        android:text="Book" />
+        android:layout_alignParentBottom="true"
+        android:text="Book"
+        android:textAlignment="center"/>
 </RelativeLayout>

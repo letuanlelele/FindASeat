@@ -66,7 +66,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView;
-        boolean isLoggedIn = ((MainActivity) requireActivity()).isLoggedIn();
+//        boolean isLoggedIn = ((MainActivity) requireActivity()).isLoggedIn();
 
         rootView = inflater.inflate(R.layout.my_profile, container, false);
         Button manageReservationsButton = rootView.findViewById(R.id.manage_reservation_button);
@@ -94,7 +94,7 @@ public class ProfileFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // User confirmed the logout
-                                ((MainActivity) requireActivity()).setLoggedIn(false);
+//                                ((MainActivity) requireActivity()).setLoggedIn(false);
 
                                 LoginFragment loginFragment = new LoginFragment();
                                 FragmentTransaction transaction = getFragmentManager().beginTransaction();

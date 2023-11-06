@@ -2,6 +2,7 @@ package com.example.findaseat;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -191,6 +192,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building1.setDescription("Leavey is...");
         building1.setLatitude(34.02204048561001);
         building1.setLongitude(-118.28292515212222);
+        building1.setOpeningTime(830);
+        building1.setClosingTime(2400);
         // Put building in hashmap
         buildingInfoMap.put(building1.getBuilding_id(), building1);
 
@@ -295,20 +298,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private void handleBuildingClick(String buildingId) {
         BuildingInfo buildingInfo = buildingInfoMap.get(buildingId);
         if (buildingInfo != null) {
-            // Create a new BottomSheetDialog
-            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
-            View view = LayoutInflater.from(getContext()).inflate(R.layout.building_info_layout, null);
-            bottomSheetDialog.setContentView(view);
-
-            // Set the building's information to the views
-            TextView nameTextView = view.findViewById(R.id.building_name);
-            nameTextView.setText(buildingInfo.getBuilding_id());
-
-            TextView descriptionTextView = view.findViewById(R.id.building_description);
-            descriptionTextView.setText(buildingInfo.getDescription());
-
-            // Show the BottomSheetDialog
-            bottomSheetDialog.show();
+//            // Create a new BottomSheetDialog
+//            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+//            View view = LayoutInflater.from(getContext()).inflate(R.layout.building_info_layout, null);
+//            bottomSheetDialog.setContentView(view);
+//
+//            // Set the building's information to the views
+//            TextView nameTextView = view.findViewById(R.id.building_name);
+//            nameTextView.setText(buildingInfo.getBuilding_id());
+//
+//            TextView descriptionTextView = view.findViewById(R.id.building_description);
+//            descriptionTextView.setText(buildingInfo.getDescription());
+//
+//            // Show the BottomSheetDialog
+//            bottomSheetDialog.show();
+            Intent intent = new Intent(getActivity(), BuildingPage.class);
+            intent.putExtra("buildingID", buildingInfo.getBuilding_id());
+            intent.putExtra("buildingDescription", buildingInfo.getDescription());
+            intent.putExtra("buildingOpening", buildingInfo.getOpeningTime());
+            intent.putExtra("buildingClosing", buildingInfo.getClosingTime());
+            startActivity(intent);
         }
     }
 
@@ -318,6 +327,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         private String description;
         private double latitude;
         private double longitude;
+        private int opening_time;
+        private int closing_time;
 
         // Empty constructor for Firestore
         public BuildingInfo() {}
@@ -353,6 +364,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         public void setLongitude(double longitude) {
             this.longitude = longitude;
         }
+
+        public int getOpeningTime() { return opening_time; }
+
+        public void setOpeningTime(int opening_time) { this.opening_time = opening_time; }
+
+        public int getClosingTime() { return closing_time; }
+
+        public void setClosingTime(int closing_time) { this.closing_time = closing_time; }
     }
 
 }
