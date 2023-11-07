@@ -193,7 +193,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building1.setLatitude(34.02204048561001);
         building1.setLongitude(-118.28292515212222);
         building1.setOpeningTime(830);
-        building1.setClosingTime(2400);
+        building1.setClosingTime(2300);
+        building1.setNum_seats(10);
+        building1.setSeatLocations(new boolean[]{ true, true, false, false, false, true, true, true, true, false });
         // Put building in hashmap
         buildingInfoMap.put(building1.getBuilding_id(), building1);
 
@@ -203,6 +205,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building2.setDescription("Fertitta is...");
         building2.setLatitude(34.01940128537009);
         building2.setLongitude(-118.28240971952378);
+        building2.setOpeningTime(1000);
+        building2.setClosingTime(1200);
+        building2.setNum_seats(5);
+        building2.setSeatLocations(new boolean[]{ false, false, false, false, false, true, true, true, true, false });
         // Put building in hashmap
         buildingInfoMap.put(building2.getBuilding_id(), building2);
 
@@ -317,6 +323,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             intent.putExtra("buildingDescription", buildingInfo.getDescription());
             intent.putExtra("buildingOpening", buildingInfo.getOpeningTime());
             intent.putExtra("buildingClosing", buildingInfo.getClosingTime());
+            intent.putExtra("numSeats", buildingInfo.getNum_seats());
+            intent.putExtra("seatLocations", buildingInfo.getSeatLocations());
             startActivity(intent);
         }
     }
@@ -329,6 +337,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         private double longitude;
         private int opening_time;
         private int closing_time;
+        private int num_seats;
+        private boolean[] locations;
 
         // Empty constructor for Firestore
         public BuildingInfo() {}
@@ -372,6 +382,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         public int getClosingTime() { return closing_time; }
 
         public void setClosingTime(int closing_time) { this.closing_time = closing_time; }
+
+        public int getNum_seats() {
+            return num_seats;
+        }
+
+        public void setNum_seats(int num_seats) {
+            this.num_seats = num_seats;
+        }
+
+        public void setSeatLocations(boolean[] locations) {
+            this.locations = locations;
+        }
+
+        public boolean[] getSeatLocations(){
+            return locations;
+        }
     }
 
 }

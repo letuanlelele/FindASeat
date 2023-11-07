@@ -69,7 +69,7 @@
         android:layout_height="wrap_content"
         android:text="End Time:"
         android:textSize="16sp"
-        android:layout_marginTop="23dp"
+        android:layout_marginTop="15dp"
         android:layout_below="@id/startTimeSpinner"/>
 
     <Spinner
@@ -78,7 +78,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/startTimeSpinner"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="2dp"
         android:layout_marginLeft="80dp"/>
 
     <GridLayout
@@ -86,9 +86,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/endTimeSpinner"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="5dp"
         android:columnCount="4"
-        android:rowCount="4" />
+        android:rowCount="5" />
 
     <Button
         android:id="@+id/bookButton"
