@@ -218,6 +218,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building3.setDescription("Doheny is...");
         building3.setLatitude(34.02098157202499);
         building3.setLongitude(-118.28390788352026);
+        building3.setOpeningTime(1000);
+        building3.setClosingTime(1900);
+        building3.setNum_seats(10);
+        building3.setSeatLocations(new boolean[]{ true, false, false, false, false, true, true, true, true, false });
         // Put building in hashmap
         buildingInfoMap.put(building3.getBuilding_id(), building3);
 
@@ -227,6 +231,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building4.setDescription("Hoose is...");
         building4.setLatitude(34.01965126926076);
         building4.setLongitude(-118.28682006643406);
+        building4.setOpeningTime(500);
+        building4.setClosingTime(1900);
+        building4.setNum_seats(12);
+        building4.setSeatLocations(new boolean[]{ true, false, false, false, false, true, true, true, true, false, false, true });
         // Put building in hashmap
         buildingInfoMap.put(building4.getBuilding_id(), building4);
 
@@ -236,6 +244,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building5.setDescription("Ronald Tutor Hall is...");
         building5.setLatitude(34.020531023744134);
         building5.setLongitude(-118.28989707852968);
+        building5.setOpeningTime(500);
+        building5.setClosingTime(1100);
+        building5.setNum_seats(11);
+        building5.setSeatLocations(new boolean[]{ true, false, false, false, true, true, true, true, false, false, true });
         // Put building in hashmap
         buildingInfoMap.put(building5.getBuilding_id(), building5);
 
@@ -245,6 +257,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building6.setDescription("Annenberg is...");
         building6.setLatitude(34.02220456164657);
         building6.setLongitude(-118.28604156472383);
+        building6.setOpeningTime(500);
+        building6.setClosingTime(1900);
+        building6.setNum_seats(10);
+        building6.setSeatLocations(new boolean[]{ true, false, false, true, true, true, true, false, false, true });
         // Put building in hashmap
         buildingInfoMap.put(building6.getBuilding_id(), building6);
 
@@ -254,6 +270,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building7.setDescription("GFS is...");
         building7.setLatitude(34.02152345532107);
         building7.setLongitude(-118.28802060664995);
+        building7.setOpeningTime(500);
+        building7.setClosingTime(1900);
+        building7.setNum_seats(9);
+        building7.setSeatLocations(new boolean[]{ true, false, false, true, true, true, false, false, true });
         // Put building in hashmap
         buildingInfoMap.put(building7.getBuilding_id(), building7);
 
@@ -263,6 +283,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building8.setDescription("SGM is...");
         building8.setLatitude(34.02150569696153);
         building8.setLongitude(-118.28915787099945);
+        building8.setOpeningTime(1000);
+        building8.setClosingTime(2200);
+        building8.setNum_seats(10);
+        building8.setSeatLocations(new boolean[]{ true, false, false, true, true, true, false, true, false, true });
         // Put building in hashmap
         buildingInfoMap.put(building8.getBuilding_id(), building8);
 
@@ -272,6 +296,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building9.setDescription("EVK is...");
         building9.setLatitude(34.02156258226899);
         building9.setLongitude(-118.28220741211746);
+        building9.setOpeningTime(500);
+        building9.setClosingTime(1300);
+        building9.setNum_seats(9);
+        building9.setSeatLocations(new boolean[]{ true, false, false, true, true, true, false, false, true });
         // Put building in hashmap
         buildingInfoMap.put(building9.getBuilding_id(), building9);
 
@@ -281,6 +309,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         building10.setDescription("Jefferson Boulevard Structure is...");
         building10.setLatitude(34.024959387502214);
         building10.setLongitude(-118.28945848221602);
+        building10.setOpeningTime(1200);
+        building10.setClosingTime(1800);
+        building10.setNum_seats(7);
+        building10.setSeatLocations(new boolean[]{ true, false, true, true, false, false, true });
         // Put building in hashmap
         buildingInfoMap.put(building10.getBuilding_id(), building10);
 
