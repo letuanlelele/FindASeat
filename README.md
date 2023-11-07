@@ -19,9 +19,16 @@ To provide you with the best information, here are the details of our Android em
 
 ## Project Status
 
-We want to be transparent about our current project status. Due to some miscommunication, a few parts of our project are not yet fully integrated. We are actively working to resolve these issues during the testing phase. Unfortunately, one of our team members faced a laptop breakdown and had to use our shared laptop to implement a critical functionality. Your understanding and patience during this time are greatly appreciated.
+We want to be transparent about our current project status. Due to miscommunication, a few parts of our project still need to be fully integrated. We are actively working to resolve these issues during the testing phase. Unfortunately, one of our team members faced a laptop breakdown and had to use our laptop to implement her functionalities, which reduced the time we could work on the project. Your understanding and patience during this time are greatly appreciated.
 
 ## Login Information
 
 For your convenience, we have provided login credentials to access our reservation information:
 
+Username: loaf
+Password: loafcat
+
+Please don't hesitate to reach out if you have any questions. Thank you for your continued support and understanding.
+
+Best regards,
+Minh, Tuan, and Nikki
