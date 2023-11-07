@@ -26,9 +26,12 @@ We want to be transparent about our current project status. Due to miscommunicat
 For your convenience, we have provided login credentials to access our reservation information:
 
 Username: loaf
+
 Password: loafcat
 
 Please don't hesitate to reach out if you have any questions. Thank you for your continued support and understanding.
+
+
 
 Best regards,
 
