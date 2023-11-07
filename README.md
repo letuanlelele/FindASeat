@@ -31,4 +31,5 @@ Password: loafcat
 Please don't hesitate to reach out if you have any questions. Thank you for your continued support and understanding.
 
 Best regards,
+
 Minh, Tuan, and Nikki
