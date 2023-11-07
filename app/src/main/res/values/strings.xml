@@ -2,7 +2,11 @@
     <string name="app_name">FindASeat</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="uscid">USC ID</string>
+    <string name="uscid">Username</string>
     <string name="login">Login</string>
     <string name="password">Password</string>
+    <string name="current_reservation_details">Current reservation details:</string>
+    <string name="current_reservation">Current Reservation</string>
+    <string name="edit_reservation">Edit Reservation</string>
+    <string name="past_reservations_details">Past reservations details:</string>
 </resources>

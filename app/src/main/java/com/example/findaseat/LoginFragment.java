@@ -101,6 +101,9 @@ public class LoginFragment extends Fragment {
                                 fragmentManager.beginTransaction()
                                         .replace(R.id.frame_layout, profileFragment)
                                         .commit();
+                            } else{
+                                TextView errorMessageTextView = rootView.findViewById(R.id.errorMessage);
+                                errorMessageTextView.setVisibility(View.VISIBLE);
                             }
                         } else {
                             Log.d(TAG, "No such document");
