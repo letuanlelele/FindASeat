@@ -53,7 +53,7 @@
         android:text="Return to map"
         android:textAlignment="center"/>
     <FrameLayout
-        android:id="@+id/returnToMap"
+        android:id="@+id/frame_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </RelativeLayout>

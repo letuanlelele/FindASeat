@@ -14,15 +14,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -31,8 +27,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -41,8 +35,20 @@ public class ManageReservationFragment extends Fragment {
     private final CollectionReference users = db.collection("users");
     private String username;
     private View rootView;
-    private final List<Reservation> currentReservationList = new ArrayList<>();
-    private final List<Reservation> pastReservationList = new ArrayList<>();
+    private static List<Reservation> currentReservationList = new ArrayList<>();
+    private static List<Reservation> pastReservationList = new ArrayList<>();
+
+    public static List<Reservation> getCurrentReservationList() { return currentReservationList; }
+
+    public static void removeCurrentReservation() {
+        currentReservationList.clear();
+    }
+
+    public static void updatePastReservationList(Reservation currReservation){
+        currReservation.setCancelled(true);
+        pastReservationList.add(currReservation);
+    }
+    public static List<Reservation> getPastReservationList() { return pastReservationList; }
     public ManageReservationFragment() {
         // Required empty public constructor
     }
@@ -60,7 +66,7 @@ public class ManageReservationFragment extends Fragment {
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame_layout, editReservationsFragment);
                 transaction.addToBackStack(null);
-                transaction.commit();
+
             }
         });
         // Initialize the RecyclerView for current and past
@@ -72,7 +78,6 @@ public class ManageReservationFragment extends Fragment {
 
         // Show current reservation:
         showReservations();
-
         // Initialize the adapter and set it to the RecyclerView
         ReservationAdapter currentAdapter = new ReservationAdapter(currentReservationList);
         currentRecyclerView.setAdapter(currentAdapter);
@@ -106,21 +111,22 @@ public class ManageReservationFragment extends Fragment {
                                 Boolean cancelled = document.getBoolean("cancelled");
                                 String cancelled_string = "Cancelled: " + String.valueOf(cancelled);
                                 Timestamp created_timestamp = document.getTimestamp("created_timestamp");
-                                String date_pull = document.getString("date");
-                                String date = "Date: " + date_pull;
+                                String date = document.getString("date");
                                 String end_time = document.getString("end_time");
                                 String start_time = document.getString("start_time");
                                 Long seat_num_pull = document.getLong("seat_num");
                                 String seat_num = "Seat number: " + seat_num_pull;
-                                String location = "Location: " + document.getString("location");
-                                String time = start_time + " - " + end_time;
+                                String location = document.getString("location");
 
                                 // Figure out if current or past
-                                if (isCurrentReservation(date_pull, end_time)) {
-                                    currentReservationList.add(new Reservation(time, date, location, seat_num, cancelled_string, created_timestamp, doc_id));
+                                if(Boolean.TRUE.equals(cancelled)){
+                                    pastReservationList.add(new Reservation(start_time, end_time, date, location, seat_num, cancelled_string, created_timestamp, doc_id, cancelled));
+                                }
+                                else if (isCurrentReservation(date, end_time)) {
+                                    currentReservationList.add(new Reservation(start_time, end_time, date, location, seat_num, cancelled_string, created_timestamp, doc_id, cancelled));
                                 }
                                 else {
-                                    pastReservationList.add(new Reservation(time, date, location, seat_num, cancelled_string, created_timestamp, doc_id));
+                                    pastReservationList.add(new Reservation(start_time, end_time, date, location, seat_num, cancelled_string, created_timestamp, doc_id, cancelled));
                                 }
 
                             }

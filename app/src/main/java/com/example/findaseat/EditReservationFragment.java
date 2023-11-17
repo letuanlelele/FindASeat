@@ -34,14 +34,17 @@ import java.util.Locale;
 public class EditReservationFragment extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private View rootView;
+
     public EditReservationFragment(){
 
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.edit_reservation, container, false);
-
+        List<Reservation> currentReservationList = ManageReservationFragment.getCurrentReservationList();
         Button cancelButton = rootView.findViewById(R.id.cancelButton);
+        Reservation currReservation = currentReservationList.get(0);
+
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,9 +56,10 @@ public class EditReservationFragment extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 // Get current reservation here
                                 // pass in current reservation and update username in function
-//                                cancelReservationUser(currReservation);
+                                cancelReservationUser(currReservation);
                                 //
-//                                cancelReservationBuilding(currReservation);
+                                cancelReservationBuilding(currReservation);
+                                ManageReservationFragment.removeCurrentReservation();
 
                                 new AlertDialog.Builder(requireContext())
                                     .setTitle("Reservation Cancelled")
@@ -85,7 +89,7 @@ public class EditReservationFragment extends Fragment {
     }
 
     private void cancelReservationUser(Reservation reservation) {
-        String username = "loaf";
+        String username = ((MainActivity) requireActivity()).getUsername();
         String doc_id = reservation.getDoc_id();
         String TAG = "myInfoTag";
         DocumentReference docRef = db.collection("users")
@@ -111,11 +115,13 @@ public class EditReservationFragment extends Fragment {
     }
 
     private void cancelReservationBuilding(Reservation reservation){
-        String building = "Leavey";
-        String date = "11-16-2023";
-        String start_time = "10:00 PM";
-        String end_time = "10:30 PM";
-        int seat = 1;
+        String building = reservation.getLocation();
+        String date = reservation.getDate();
+        String start_time = reservation.getStartTime();
+        String end_time = reservation.getEndTime();
+        int seat = BookingActivity.parseSelectedSeat(reservation.getSeat());
+
+        Log.i("myInfoTag", building + " " + date + " " + start_time + " " + end_time + " " + seat);
 
         db.collection("BuildingInfo")
                 .document(building)
@@ -127,9 +133,7 @@ public class EditReservationFragment extends Fragment {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String date_pull = document.getId();
-
                                 if (date_pull.equals(date)) {
-                                    Log.i("myInfoTag", "date_pull == date YESYES");
                                     // parse start time
                                     SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
                                     Date startTime;
@@ -154,28 +158,25 @@ public class EditReservationFragment extends Fragment {
                                     Calendar calendar = Calendar.getInstance();
                                     calendar.setTime(startTime);
                                     while (calendar.get(Calendar.HOUR_OF_DAY) != endTime[0]) {
-                                        Log.i("myInfoTag", "Adding in Booking: " + SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
                                         timeFieldsToCheck.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
                                         calendar.add(Calendar.MINUTE, 30);
                                     }
                                     if(endTime[1] == 30){
-                                        Log.i("myInfoTag", "Adding in Booking: " + SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
                                         timeFieldsToCheck.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
                                         calendar.add(Calendar.MINUTE, 30);
                                     }
 
                                     // update each time field between start and end
                                     for(String timeField : timeFieldsToCheck){
-                                        Log.d("myInfoTag", "IN FOR LOOP");
                                         // get boolean list at timeField
                                         List<Boolean> seatAvailability = (List<Boolean>) document.get(timeField);
-                                        // set seat as unavailable
+                                        // set seat as available
                                         seatAvailability.set(seat-1, true);
 
                                         // update document in Firestore
                                         DocumentReference docRef = db.collection("BuildingInfo").document(building).collection("reservations").document(document.getId());
                                         docRef.update(timeField, seatAvailability)
-                                                .addOnSuccessListener(aVoid -> Log.d("myInfoTag", "BRUH successfully updated to: " + timeField + " and " + seatAvailability))
+                                                .addOnSuccessListener(aVoid -> Log.d("myInfoTag", "BRUH2 successfully updated to: " + timeField + " and " + seatAvailability))
                                                 .addOnFailureListener(new OnFailureListener() {
                                                     @Override
                                                     public void onFailure(@NonNull Exception e) {

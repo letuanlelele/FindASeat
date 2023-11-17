@@ -6,7 +6,13 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/timeTextView"
+        android:id="@+id/startTimeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time: " />
+
+    <TextView
+        android:id="@+id/endTimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Time: " />

@@ -35,7 +35,10 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     }
 
     public static class ReservationViewHolder extends RecyclerView.ViewHolder {
-        private final TextView timeTextView;
+        private final TextView startTimeTextView;
+
+        private final TextView endTimeTextView;
+
         private final TextView dateTextView;
         private final TextView locationTextView;
         private final TextView seatTextView;
@@ -43,7 +46,8 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
 
         public ReservationViewHolder(View itemView) {
             super(itemView);
-            timeTextView = itemView.findViewById(R.id.timeTextView);
+            startTimeTextView = itemView.findViewById(R.id.startTimeTextView);
+            endTimeTextView = itemView.findViewById(R.id.endTimeTextView);
             dateTextView = itemView.findViewById(R.id.dateTextView);
             locationTextView = itemView.findViewById(R.id.locationTextView);
             seatTextView = itemView.findViewById(R.id.seatTextView);
@@ -51,9 +55,14 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         }
 
         public void bind(Reservation reservation) {
-            timeTextView.setText(reservation.getTime());
-            dateTextView.setText(reservation.getDate());
-            locationTextView.setText(reservation.getLocation());
+            String start_time = "Start time: " + reservation.getStartTime();
+            startTimeTextView.setText(start_time);
+            String end_time = "End time: " + reservation.getEndTime();
+            endTimeTextView.setText(end_time);
+            String date = "Date: " + reservation.getDate();
+            dateTextView.setText(date);
+            String location = "Location: " + reservation.getLocation();
+            locationTextView.setText(location);
             seatTextView.setText(reservation.getSeat());
             statusTextView.setText(reservation.getStatus());
         }

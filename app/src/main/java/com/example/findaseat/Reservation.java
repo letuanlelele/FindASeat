@@ -3,7 +3,8 @@ package com.example.findaseat;
 import com.google.firebase.Timestamp;
 
 public class Reservation {
-    private String time;
+    private String start_time;
+    private String end_time;
     private String date;
     private String location;
     private String seat;
@@ -11,24 +12,33 @@ public class Reservation {
     private Timestamp timestamp;
 
     private String doc_id;
+    private boolean cancelled;
 
-    public Reservation(String time, String date, String location, String seat, String status, Timestamp timestamp, String doc_id) {
-        this.time = time;
+    public Reservation(String start_time, String end_time, String date, String location, String seat, String status, Timestamp timestamp, String doc_id, boolean cancelled) {
+        this.start_time = start_time;
+        this.end_time = end_time;
         this.date = date;
         this.location = location;
         this.seat = seat;
         this.status = status;
         this.timestamp = timestamp;
         this.doc_id = doc_id;
+        this.cancelled = cancelled;
     }
 
-    public String getTime() {
-        return time;
+    public String getStartTime() {
+        return start_time;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setStartTime(String start_time) {
+        this.start_time = start_time;
     }
+
+    public String getEndTime(){
+        return end_time;
+    }
+
+    public void setEndTime(){ this.end_time = end_time; }
 
     public String getDate() {
         return date;
@@ -77,6 +87,14 @@ public class Reservation {
 
     public void setDoc_id(String doc_id) {
         this.doc_id = doc_id;
+    }
+
+    public boolean getCancelled() {
+        return cancelled;
+    }
+
+    public void setCancelled(boolean cancelled){
+        this.cancelled = cancelled;
     }
 }
 

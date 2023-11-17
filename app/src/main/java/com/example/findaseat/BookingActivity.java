@@ -91,6 +91,10 @@ public class BookingActivity extends AppCompatActivity {
         returnToMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                LoginFragment loginFragment = new LoginFragment();
+//                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//                transaction.replace(R.id.frame_layout, loginFragment);
+//                transaction.commit();
                 returnToMap();
             }
         });
@@ -117,7 +121,7 @@ public class BookingActivity extends AppCompatActivity {
         return new int[]{hourOfDay, minutes};
     }
 
-    public int parseSelectedSeat(String selectedSeat){
+    public static int parseSelectedSeat(String selectedSeat){
         // Define the regex pattern to match numbers
         String regex = "\\d+";
 
@@ -253,13 +257,14 @@ public class BookingActivity extends AppCompatActivity {
     }
 
     private void returnToMap(){
-//        Fragment myFragment = new MapFragment();
+//        MapFragment myFragment = new MapFragment();
 //        FragmentManager fragmentManager = getSupportFragmentManager();
 //        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.returnToMap, myFragment);
+//        fragmentTransaction.replace(R.id.frame_layout, myFragment);
 //        fragmentTransaction.addToBackStack(null);
 //        fragmentTransaction.commit();
         Intent intent = new Intent(BookingActivity.this, MainActivity.class);
+        intent.putExtra("isLoggedIn", true);
         startActivity(intent);
     }
 //    private void goToFragment() {
