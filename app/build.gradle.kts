@@ -57,6 +57,8 @@ dependencies {
     implementation ("com.google.firebase:firebase-firestore:24.9.1")
     implementation ("com.google.firebase:firebase-core:21.1.1")
 
+    testImplementation("org.robolectric:robolectric:4.7.3")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
 
 }
 

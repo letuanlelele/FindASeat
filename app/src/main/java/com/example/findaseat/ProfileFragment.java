@@ -105,6 +105,7 @@ public class ProfileFragment extends Fragment {
         return rootView;
     }
 
+    // FIND USER DOCUMENT
     private void startFireStore() {
         username = ((MainActivity) requireActivity()).getUsername();
         DocumentReference docRef = db.collection("users").document(username);
@@ -145,5 +146,5 @@ public class ProfileFragment extends Fragment {
                 }
             }
         });
-        }
     }
+}

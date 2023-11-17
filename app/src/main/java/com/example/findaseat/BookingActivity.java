@@ -1,20 +1,28 @@
 package com.example.findaseat;
 
+import static java.lang.Integer.parseInt;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.findaseat.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.core.Tag;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -25,26 +33,38 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BookingActivity extends AppCompatActivity {
 
     private TextView dateTextView;
     private TextView seatTextView;
     private TextView timeTextView;
+    private View returnToMapButton;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference users = db.collection("BuildingInfo");
     private String selectedBuilding;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i("myInfoTag", "Check 1");
+
+        // get page xml and text views
         setContentView(R.layout.activity_booking);
         dateTextView = findViewById(R.id.dateTextView);
         seatTextView = findViewById(R.id.seatTextView);
         timeTextView = findViewById(R.id.timeTextView);
+        returnToMapButton = findViewById(R.id.returnToMapButton);
 
+        Log.i("myInfoTag", "Check 2");
+        // get data from BuildingPage Activity
         Intent intent = getIntent();
         String selectedDate = intent.getStringExtra("selectedDate");
         String selectedSeat = intent.getStringExtra("selectedSeat");
@@ -52,16 +72,32 @@ public class BookingActivity extends AppCompatActivity {
         String selectedEndTime = intent.getStringExtra("selectedEndTime");
         selectedBuilding = intent.getStringExtra("selectedBuilding");
 
+        Log.i("myInfoTag", "Check 3");
+        // User Fields: Set text views
         dateTextView.setText("Selected Date: " + selectedDate);
         seatTextView.setText("Selected Seat: " + selectedSeat);
         timeTextView.setText("Selected Time: " + selectedStartTime);
 
-        String[] parts = selectedSeat.split(" ");
-        int seatNum = Integer.parseInt(parts[1]);
+        // parse data for firebase
+        // Split "Seat 2" string
+        Log.i("myInfoTag", "Check 4");
+        int seatNum = parseSelectedSeat(selectedSeat);
         // Call firebase function here
-        firebase(selectedBuilding, selectedStartTime, selectedEndTime, seatNum);
+        Log.i("myInfoTag", "Check 5");
+        updateFirebaseBuilding(selectedDate, selectedStartTime, selectedEndTime, seatNum);
+        updateFirebaseUser(selectedDate, selectedStartTime, selectedEndTime, seatNum);
+
+        // Button to return to map
+        returnToMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                returnToMap();
+            }
+        });
+
     }
 
+    // Parses a String from to a 24-Hour Format (i.e. 5:00PM = 17)
     public static int[] convertTo24HourFormat(String timeString) throws ParseException {
         // Define the input format for parsing the time string
         SimpleDateFormat inputFormat = new SimpleDateFormat("h:mm a", Locale.US);
@@ -81,8 +117,28 @@ public class BookingActivity extends AppCompatActivity {
         return new int[]{hourOfDay, minutes};
     }
 
-    private void firebase(String date, String selectedStartTime, String selectedEndTime, int selectedSeat) {
-        db.collection("users")
+    public int parseSelectedSeat(String selectedSeat){
+        // Define the regex pattern to match numbers
+        String regex = "\\d+";
+
+        // Compile the regex pattern
+        Pattern pattern = Pattern.compile(regex);
+
+        // Matcher for the string with asterisk
+        Matcher matcher = pattern.matcher(selectedSeat);
+
+        // Find and print the number from the string without asterisk
+        if (matcher.find()) {
+            System.out.println(matcher.group()); // This will print "10"
+        }
+        Log.i("myInfoTag", matcher.group());
+        return parseInt(matcher.group());
+    }
+
+    // Create new reservation in firebase
+    private void updateFirebaseBuilding(String date, String selectedStartTime, String selectedEndTime, int selectedSeat) {
+        Log.i("myInfoTag", "In firebase with " + selectedBuilding);
+        db.collection("BuildingInfo")
                 .document(selectedBuilding)
                 .collection("reservations")
                 .get()
@@ -92,7 +148,9 @@ public class BookingActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String date_pull = document.getId();
-                                if (date_pull == date) {
+
+                                if (date_pull.equals(date)) {
+                                    Log.i("myInfoTag", "date_pull == date YESYES");
                                     // parse start time
                                     SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
                                     Date startTime;
@@ -112,50 +170,101 @@ public class BookingActivity extends AppCompatActivity {
                                         return;
                                     }
 
-                                    // generate list of times to check for availability
+                                    // generate list of times to update availability
                                     ArrayList<String> timeFieldsToCheck = new ArrayList<>();
                                     Calendar calendar = Calendar.getInstance();
                                     calendar.setTime(startTime);
                                     while (calendar.get(Calendar.HOUR_OF_DAY) != endTime[0]) {
-                                        Log.i("myInfoTag", "Adding: " + SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
-                                        calendar.add(Calendar.MINUTE, 30);
+                                        Log.i("myInfoTag", "Adding in Booking: " + SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
                                         timeFieldsToCheck.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
+                                        calendar.add(Calendar.MINUTE, 30);
                                     }
                                     if(endTime[1] == 30){
-                                        Log.i("myInfoTag", "Adding: " + SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
-                                        calendar.add(Calendar.MINUTE, 30);
+                                        Log.i("myInfoTag", "Adding in Booking: " + SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
                                         timeFieldsToCheck.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
+                                        calendar.add(Calendar.MINUTE, 30);
                                     }
 
+                                    // update each time field between start and end
                                     for(String timeField : timeFieldsToCheck){
+                                        Log.d("myInfoTag", "IN FOR LOOP");
+                                        // get boolean list at timeField
                                         List<Boolean> seatAvailability = (List<Boolean>) document.get(timeField);
+                                        // set seat as unavailable
+                                        seatAvailability.set(selectedSeat-1, false);
 
-                                        seatAvailability.set(selectedSeat, false);
-
-                                        DocumentReference docRef = db.collection("BuildingInfo").document(selectedBuilding).collection("reservations").document(timeField);
-                                        // Update the document
+                                        // update document in Firestore
+                                        DocumentReference docRef = db.collection("BuildingInfo").document(selectedBuilding).collection("reservations").document(document.getId());
                                         docRef.update(timeField, seatAvailability)
-                                                .addOnSuccessListener(aVoid -> Log.d("Firestore", "DocumentSnapshot successfully updated!"))
+                                                .addOnSuccessListener(aVoid -> Log.d("myInfoTag", "BRUH successfully updated to: " + timeField + " and " + seatAvailability))
                                                 .addOnFailureListener(new OnFailureListener() {
                                                     @Override
                                                     public void onFailure(@NonNull Exception e) {
-                                                        Log.w("Firestore", "Error updating document", e);
+                                                        Log.w("myInfoTag", "Error updating document", e);
                                                     }
                                                 });
                                     }
                                 }
-
-
-
-
+                                // log date document found
                                 Log.d("myInfoTag", document.getId() + " => " + document.getData());
                             }
+                            Log.i("myInfoTag", "IN SUCCESSFUL");
                         } else {
                             Log.d("myInfoTag", "Error getting documents: ", task.getException());
                         }
                     }
                 });
+
     }
+
+    // Create new reservation in users
+    private void updateFirebaseUser(String date, String selectedStartTime, String selectedEndTime, int selectedSeat) {
+        String username = "loaf";
+        String TAG = "myInfoTag";
+
+        // Create map that stores reservation info
+        Map<String, Object> user_reservation_info = new HashMap<>();
+        user_reservation_info.put("cancelled", false);
+        user_reservation_info.put("created_timestamp", FieldValue.serverTimestamp());
+        user_reservation_info.put("date", date);
+        user_reservation_info.put("end_time", selectedEndTime);
+        user_reservation_info.put("location", selectedBuilding);
+        user_reservation_info.put("seat_num", selectedSeat);
+        user_reservation_info.put("start_time", selectedStartTime);
+
+        Log.d("myInfoTag", "user_reservation_info: " + user_reservation_info);
+
+        db.collection("users")
+                .document(username)
+                .collection("user_reservations")
+                .add(user_reservation_info)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding document", e);
+                    }
+                });
+    }
+
+    private void returnToMap(){
+//        Fragment myFragment = new MapFragment();
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.returnToMap, myFragment);
+//        fragmentTransaction.addToBackStack(null);
+//        fragmentTransaction.commit();
+        Intent intent = new Intent(BookingActivity.this, MainActivity.class);
+        startActivity(intent);
+    }
+//    private void goToFragment() {
+//
+//    }
 }
 
 

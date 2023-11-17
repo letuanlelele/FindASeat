@@ -30,6 +30,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -70,14 +73,6 @@ public class ManageReservationFragment extends Fragment {
         // Show current reservation:
         showReservations();
 
-        //currentReservationList.add(new Reservation("4:30 PM - 6:30 PM", "2023-11-17", "Doheny", "Seat 3", "Cancelled"));
-
-
-        // Create a list of reservations (replace this with your data)
-//        pastReservationList.add(new Reservation("3:30 PM - 5:00 PM", "2023-10-17", "Leavey Library", "Seat 3", "Cancelled: false"));
-//        pastReservationList.add(new Reservation("2:00 PM - 2:30 PM", "2023-10-16", "Taco Bell", "Seat 2", "Cancelled: true"));
-//        pastReservationList.add(new Reservation("9:00 AM - 10:30 AM", "2023-10-15", "Northern Cafe", "Seat 1", "Cancelled: false"));
-
         // Initialize the adapter and set it to the RecyclerView
         ReservationAdapter currentAdapter = new ReservationAdapter(currentReservationList);
         currentRecyclerView.setAdapter(currentAdapter);
@@ -106,6 +101,8 @@ public class ManageReservationFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, document.getId() + " => " + document.getData());
                                 // Get data from Firebase
+                                String doc_id = document.getId();
+
                                 Boolean cancelled = document.getBoolean("cancelled");
                                 String cancelled_string = "Cancelled: " + String.valueOf(cancelled);
                                 Timestamp created_timestamp = document.getTimestamp("created_timestamp");
@@ -113,23 +110,27 @@ public class ManageReservationFragment extends Fragment {
                                 String date = "Date: " + date_pull;
                                 String end_time = document.getString("end_time");
                                 String start_time = document.getString("start_time");
-                                String seat_num_pull = document.getString("seat_num");
+                                Long seat_num_pull = document.getLong("seat_num");
                                 String seat_num = "Seat number: " + seat_num_pull;
                                 String location = "Location: " + document.getString("location");
                                 String time = start_time + " - " + end_time;
 
                                 // Figure out if current or past
                                 if (isCurrentReservation(date_pull, end_time)) {
-                                    currentReservationList.add(new Reservation(time, date, location, seat_num, cancelled_string));
+                                    currentReservationList.add(new Reservation(time, date, location, seat_num, cancelled_string, created_timestamp, doc_id));
                                 }
                                 else {
-                                    pastReservationList.add(new Reservation(time, date, location, seat_num, cancelled_string));
+                                    pastReservationList.add(new Reservation(time, date, location, seat_num, cancelled_string, created_timestamp, doc_id));
                                 }
 
                             }
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
+
+                        // Sort past reservations: latest created first
+                        pastReservationList.sort((r1, r2) -> r2.getTimestamp().compareTo(r1.getTimestamp()));
+
                         // Display Reservations
                         ReservationAdapter currentAdapter = new ReservationAdapter(currentReservationList);
                         currentRecyclerView.setAdapter(currentAdapter);
@@ -149,6 +150,12 @@ public class ManageReservationFragment extends Fragment {
             Date time = timeFormat.parse(timeString);
             Date currentDateTime = new Date(); // Get the current date
             Date targetDateTime = combineDateAndTime(date, time);
+            Log.i("myInfoTag", "dateString: " + dateString);
+            Log.i("myInfoTag", "parsed date: " + String.valueOf(date));
+            Log.i("myInfoTag", "timeString " + timeString);
+            Log.i("myInfoTag", "parsed time " + String.valueOf(time));
+            Log.i("myInfoTag", "Target date is: " + String.valueOf(targetDateTime));
+            Log.i("myInfoTag", "Current date is: " + String.valueOf(currentDateTime));
 
 
             if (targetDateTime.before(currentDateTime)) {
@@ -169,10 +176,22 @@ public class ManageReservationFragment extends Fragment {
         }
     }
 
-    private Date combineDateAndTime(Date date, Date time) {
-        long dateMillis = date.getTime();
-        long timeMillis = time.getTime();
-        long dateTimeMillis = dateMillis + timeMillis;
-        return new Date(dateTimeMillis);
+    public static Date combineDateAndTime(Date date, Date time) {
+        Calendar calendarDate = Calendar.getInstance();
+        calendarDate.setTime(date);
+
+        Calendar calendarTime = Calendar.getInstance();
+        calendarTime.setTime(time);
+
+        calendarDate.set(Calendar.HOUR_OF_DAY, calendarTime.get(Calendar.HOUR_OF_DAY));
+        calendarDate.set(Calendar.MINUTE, calendarTime.get(Calendar.MINUTE));
+        calendarDate.set(Calendar.SECOND, calendarTime.get(Calendar.SECOND));
+        calendarDate.set(Calendar.MILLISECOND, calendarTime.get(Calendar.MILLISECOND));
+
+        return calendarDate.getTime();
     }
+
+
+
+
 }

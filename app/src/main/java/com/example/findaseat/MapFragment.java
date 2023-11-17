@@ -334,8 +334,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void handleBuildingClick(String buildingId) {
-        BuildingInfo buildingInfo = buildingInfoMap.get(buildingId);
-        if (buildingInfo != null) {
+//        // If user is NOT logged in
+//        if (((MainActivity) requireActivity()).isLoggedIn() == false) {
 //            // Create a new BottomSheetDialog
 //            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
 //            View view = LayoutInflater.from(getContext()).inflate(R.layout.building_info_layout, null);
@@ -343,22 +343,41 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 //
 //            // Set the building's information to the views
 //            TextView nameTextView = view.findViewById(R.id.building_name);
-//            nameTextView.setText(buildingInfo.getBuilding_id());
+//            nameTextView.setText("Please log in to view building information.");
 //
-//            TextView descriptionTextView = view.findViewById(R.id.building_description);
-//            descriptionTextView.setText(buildingInfo.getDescription());
+////            TextView descriptionTextView = view.findViewById(R.id.building_description);
+////            descriptionTextView.setText(buildingInfo.getDescription());
 //
 //            // Show the BottomSheetDialog
 //            bottomSheetDialog.show();
-            Intent intent = new Intent(getActivity(), BuildingPage.class);
-            intent.putExtra("buildingID", buildingInfo.getBuilding_id());
-            intent.putExtra("buildingDescription", buildingInfo.getDescription());
-            intent.putExtra("buildingOpening", buildingInfo.getOpeningTime());
-            intent.putExtra("buildingClosing", buildingInfo.getClosingTime());
-            intent.putExtra("numSeats", buildingInfo.getNum_seats());
-            intent.putExtra("seatLocations", buildingInfo.getSeatLocations());
-            startActivity(intent);
-        }
+//        }
+//        else {
+//            BuildingInfo buildingInfo = buildingInfoMap.get(buildingId);
+//            if (buildingInfo != null) {
+//
+//                Intent intent = new Intent(getActivity(), BuildingPage.class);
+//                intent.putExtra("buildingID", buildingInfo.getBuilding_id());
+//                intent.putExtra("buildingDescription", buildingInfo.getDescription());
+//                intent.putExtra("buildingOpening", buildingInfo.getOpeningTime());
+//                intent.putExtra("buildingClosing", buildingInfo.getClosingTime());
+//                intent.putExtra("numSeats", buildingInfo.getNum_seats());
+//                intent.putExtra("seatLocations", buildingInfo.getSeatLocations());
+//                startActivity(intent);
+//            }
+//        }
+        BuildingInfo buildingInfo = buildingInfoMap.get(buildingId);
+            if (buildingInfo != null) {
+
+                Intent intent = new Intent(getActivity(), BuildingPage.class);
+                intent.putExtra("buildingID", buildingInfo.getBuilding_id());
+                intent.putExtra("buildingDescription", buildingInfo.getDescription());
+                intent.putExtra("buildingOpening", buildingInfo.getOpeningTime());
+                intent.putExtra("buildingClosing", buildingInfo.getClosingTime());
+                intent.putExtra("numSeats", buildingInfo.getNum_seats());
+                intent.putExtra("seatLocations", buildingInfo.getSeatLocations());
+                startActivity(intent);
+            }
+
     }
 
 

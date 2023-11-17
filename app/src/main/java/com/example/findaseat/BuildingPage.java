@@ -1,5 +1,7 @@
 package com.example.findaseat;
 
+import static com.example.findaseat.ManageReservationFragment.combineDateAndTime;
+
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -45,14 +47,23 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+
+
 public class BuildingPage extends AppCompatActivity {
-    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+//    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+private FirebaseFirestore db;
 
     private int numSeats;
     private int openingHour;
+    private String stringOpeningMinute;
+    private String openingAmPm;
+    private int openingHour12H;
     private int openingMinute;
     private int closingHour;
+    private String closingAmPm;
+    private int closingHour12H;
     private int closingMinute;
+    private String stringClosingMinute;
     private boolean[] seatLocations;
 
     private Button datePickerButton;
@@ -66,13 +77,18 @@ public class BuildingPage extends AppCompatActivity {
     private String selectedSeat;
     private String selectedDate;
 
+    List<Integer> availableSeats;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        db = FirebaseFirestore.getInstance();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_building);
         Intent intent = getIntent();
 
+        ///////// DISPlAY BUILDING OPENING/CLOSING TIME AFTER CLICKING ON MAP MARKER
         // get number of seats
         numSeats = intent.getIntExtra("numSeats", 0);
         seatLocations = intent.getBooleanArrayExtra("seatLocations");
@@ -89,47 +105,21 @@ public class BuildingPage extends AppCompatActivity {
 
         /* set building opening time text */
         int buildingOpeningTime = intent.getIntExtra("buildingOpening", 900);
-        // set hour value
-        openingHour = (buildingOpeningTime/100);
-        int openingHourAmPm = (buildingOpeningTime/100)%12;
-        if(openingHourAmPm == 0){
-            openingHourAmPm = 12;
-        }
-        // set
-        openingMinute = buildingOpeningTime % 100;
-        String stringOpeningMinute = Integer.toString(openingMinute);
-        if(openingMinute == 0){
-            stringOpeningMinute = "00";
-        }
-        // set am or pm value
-        String openingAmPm = "am";
-        if(openingHour != 24 && openingHour > 11){
-            openingAmPm = "pm";
-        }
-        TextView buildingOpeningTextView = findViewById(R.id.buildingOpeningText);
-        buildingOpeningTextView.setText("Opening Time: " + openingHourAmPm + ":" + stringOpeningMinute + openingAmPm);
+        parseHHMMa(buildingOpeningTime, true);
 
-        /* set building opening time text */
+        TextView buildingOpeningTextView = findViewById(R.id.buildingOpeningText);
+        buildingOpeningTextView.setText("Opening Time: " + openingHour12H + ":" + stringOpeningMinute + openingAmPm);
+
+        /* set building closing time text */
         int buildingClosingTime = intent.getIntExtra("buildingClosing", 2400);
-        // set hour value
-        closingHour = (buildingClosingTime/100);
-        int closingHourAmPm = closingHour%12;
-        if(closingHourAmPm == 0){
-            closingHourAmPm = 12;
-        }
-        // set minute value
-        closingMinute = buildingClosingTime % 100;
-        String stringClosingMinute = Integer.toString(closingMinute);
-        if(closingMinute == 0){
-            stringClosingMinute = "00";
-        }
-        // set am or pm value
-        String closingAmPm = "am";
-        if(closingHour != 24 && closingHour > 11){
-            closingAmPm = "pm";
-        }
+        parseHHMMa(buildingClosingTime, false);
+
         TextView buildingClosingTextView = findViewById(R.id.buildingClosingText);
-        buildingClosingTextView.setText("Closing Time: " + closingHourAmPm + ":" + stringClosingMinute + closingAmPm);
+        buildingClosingTextView.setText("Closing Time: " + closingHour12H + ":" + stringClosingMinute + closingAmPm);
+
+
+
+
 
         datePickerButton = findViewById(R.id.datePickerButton);
         startTimeSpinner = findViewById(R.id.startTimeSpinner);
@@ -163,6 +153,50 @@ public class BuildingPage extends AppCompatActivity {
         });
     }
 
+    private void parseHHMMa(int time, boolean isOpeningTime) {
+        if (isOpeningTime) {
+            // set hour value
+            openingHour = (time/100);
+            openingHour12H = (time/100)%12;
+            if(openingHour12H == 0){
+                openingHour12H = 12;
+            }
+
+            // set
+            openingMinute = time % 100;
+            stringOpeningMinute = Integer.toString(openingMinute);
+
+            if(openingMinute == 0){
+                stringOpeningMinute = "00";
+            }
+            // set am or pm value
+            openingAmPm = "am";
+            if(openingHour != 24 && openingHour > 11){
+                openingAmPm = "pm";
+            }
+        }
+        else {
+            // set hour value
+            closingHour = (time/100);
+            closingHour12H = closingHour%12;
+            if(closingHour12H == 0){
+                closingHour12H = 12;
+            }
+            // set minute value
+            closingMinute = time % 100;
+            stringClosingMinute = Integer.toString(closingMinute);
+            if(closingMinute == 0){
+                stringClosingMinute = "00";
+            }
+            // set am or pm value
+            closingAmPm = "am";
+            if(closingHour != 24 && closingHour > 11){
+                closingAmPm = "pm";
+            }
+        }
+    }
+
+
     private void showDatePickerDialog() {
         // Get the current date using Calendar
         Calendar calendar = Calendar.getInstance();
@@ -177,6 +211,8 @@ public class BuildingPage extends AppCompatActivity {
                     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
                         selectedDate = (month + 1) + "-" + day + "-" + year; // Format the selected date
                         datePickerButton.setText(selectedDate);
+
+                        populateTimeSpinners();
                     }
                 },
                 // Set the initial date (e.g., the current date)
@@ -187,12 +223,56 @@ public class BuildingPage extends AppCompatActivity {
     }
 
 
+    private void restrictTimeSpinners(Calendar calendar) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mma");
+        try {
+            Date date = dateFormat.parse(selectedDate);
+            Date openingTime = timeFormat.parse(openingHour12H + ":" + stringOpeningMinute + openingAmPm);
+            Date closingTime = timeFormat.parse(closingHour12H + ":" + stringClosingMinute + closingAmPm);
+            Date currentDateTime = new Date(); // Get the current date
+
+            Date openingDateTime = combineDateAndTime(date, openingTime);
+            Date closingDateTime = combineDateAndTime(date, closingTime);
+
+
+            // if current > closing
+            // toast "can't book"
+            if(currentDateTime.compareTo(closingDateTime) > 0) {
+                Toast.makeText(getApplicationContext(), "This building is closed for today. Please select a different date.", Toast.LENGTH_LONG).show();
+            }
+
+            int result = currentDateTime.compareTo(openingDateTime);
+            // currentDateTime < openingDateTime
+            if(result < 0){
+                calendar.set(Calendar.HOUR_OF_DAY, openingHour);
+                calendar.set(Calendar.MINUTE, openingMinute);
+
+            }
+            // openingDateTime < currentDateTime
+            else {
+                // round up to next hour
+                if(calendar.get(Calendar.MINUTE) > 29){
+                    calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY)+1);
+                    calendar.set(Calendar.MINUTE, 0);
+                }
+                // round up to next 30 minutes
+                else {
+                    calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY));
+                    calendar.set(Calendar.MINUTE, 30);
+                }
+            }
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
     private void populateTimeSpinners() {
         // Example: Populate time intervals starting at 9:00 AM and ending at 5:00 PM with 30-minute intervals
         List<String> timeIntervals = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, openingHour);
-        calendar.set(Calendar.MINUTE, openingMinute);
+
+        restrictTimeSpinners(calendar);
+
 
         // populate the start time intervals
         int closingHourPopulate = closingHour;
@@ -304,7 +384,7 @@ public class BuildingPage extends AppCompatActivity {
         });
     }
 
-    public static int[] convertTo24HourFormat(String timeString) throws ParseException {
+    public int[] convertTo24HourFormat(String timeString) throws ParseException {
         // Define the input format for parsing the time string
         SimpleDateFormat inputFormat = new SimpleDateFormat("h:mm a", Locale.US);
 
@@ -323,6 +403,10 @@ public class BuildingPage extends AppCompatActivity {
         return new int[]{hourOfDay, minutes};
     }
 
+//    public int add(int num1, int num2)
+
+
+    /* SEAT BUTTON FUNCTIONS */
     private void clearSeatButtons() {
         if (seatGrid != null) {
             for (int i = 0; i < seatGrid.getChildCount(); i++) {
@@ -335,21 +419,100 @@ public class BuildingPage extends AppCompatActivity {
         }
     }
 
+    private void updateSeatButtons(List<Integer> availableSeats, Boolean docExists) {
+        if (docExists) {
+            for (Integer seat : availableSeats) {
+                // create new buttons
+                final Button seatButton = new Button(BuildingPage.this);
+
+                // check if seat is indoors or outdoors and mark as indoor/outdoors
+                boolean isIndoors = seatLocations[seat];
+                String outsideAsterisk = "";
+                if (!isIndoors) {
+                    outsideAsterisk = "*";
+                }
+                int outputSeat = seat + 1;  // convert Integer to int
+                seatButton.setText("Seat " + outputSeat + outsideAsterisk);
+
+                updateSeatButtonsHelper(seatButton);
+            }
+        }
+        else {
+                for (int i = 1; i <= numSeats; i++) {
+                    // create new buttons
+                    final Button seatButton = new Button(BuildingPage.this);
+
+                    // check if seat is indoors or outdoors
+                    boolean isIndoors = seatLocations[i-1];
+                    String outsideAsterisk = "";
+                    if(!isIndoors){
+                        outsideAsterisk = "*";
+                    }
+                    seatButton.setText("Seat " + i + outsideAsterisk);
+
+                    updateSeatButtonsHelper(seatButton);
+                }
+        }
+    }
+
+    private void updateSeatButtonsHelper(Button seatButton) {
+        seatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Deselect all seat buttons when new seat is deselected
+                for (int j = 0; j < seatGrid.getChildCount(); j++) {
+                    View childView = seatGrid.getChildAt(j);
+                    if (childView instanceof Button) {
+                        childView.setSelected(false);
+                    }
+                }
+                // Select the clicked seat button
+                seatButton.setSelected(true);
+
+                // Update the selected seat
+                selectedSeat = seatButton.getText().toString();
+            }
+        });
+        // Display seat button
+        seatButton.setBackgroundResource(R.drawable.seat_button_selector);
+        seatGrid.addView(seatButton);
+    }
+
+    private void createNewDateDocument(Map<String, Object> newReservationFields) {
+        db.collection("BuildingInfo").document(selectedBuilding).collection("reservations").document(selectedDate)
+                .set(newReservationFields)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.i("myInfoTag", "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.i("myInfoTag", "Error writing document", e);
+                        return;
+                    }
+                });
+    }
+
+
     private void generateSeatButtons() {
-        Log.i("myInfoTag", "start: " + selectedStartTime);
+        Log.i("myInfoTag", "Start Time before sdf parse: " + selectedStartTime);
         Log.i("myInfoTag", "end: " + selectedEndTime);
 
         // parse start time
-        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a", Locale.getDefault());
         Date startTime;
         try {
             startTime = sdf.parse(selectedStartTime);
+            Log.i("myInfoTag", "Start Time after sdf parse: " + startTime);
         } catch (ParseException e) {
             // Handle parsing error
             Log.i("myInfoTag", String.valueOf(e));
             return;
         }
-        // parse end time
+        // parse end time from string to array: {0: hours, 1: minutes}
         int[] endTime;
         try {
             endTime = convertTo24HourFormat(selectedEndTime);
@@ -358,22 +521,12 @@ public class BuildingPage extends AppCompatActivity {
             return;
         }
 
-        // generate list of times to check for availability
-        ArrayList<String> timeFieldsToCheck = new ArrayList<>();
+        // create calendar instance to generate time fields
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(startTime);
-        while (calendar.get(Calendar.HOUR_OF_DAY) != endTime[0]) {
-            Log.i("myInfoTag", "Adding: " + SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
-            calendar.add(Calendar.MINUTE, 30);
-            timeFieldsToCheck.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
-        }
-        if(endTime[1] == 30){
-            Log.i("myInfoTag", "Adding: " + SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
-            calendar.add(Calendar.MINUTE, 30);
-            timeFieldsToCheck.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
-        }
 
         // get selectedDate document
+        Log.d("myInfoTag", selectedBuilding + " " + selectedDate);
         DocumentReference reservationsRef = db.collection("BuildingInfo")
                 .document(selectedBuilding)
                 .collection("reservations")
@@ -384,154 +537,82 @@ public class BuildingPage extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
-                    // selectedDate document exists
+                    /* DOCUMENT EXISTS */
+                    /* Date selected found in current database */
                     if (document != null && document.exists()) {
                         Log.i("myInfoTag", "in exists");
-                        // Keep track of available seats
-                        List<Integer> availableSeats = IntStream.range(0, numSeats).boxed().collect(Collectors.toList());
+                        // List to track of available seats
+                        availableSeats = IntStream.range(0, numSeats).boxed().collect(Collectors.toList());
 
-                        // Check each time field
+                        // generate ArrayList of times to check from startTime to endTime
+                        ArrayList<String> timeFieldsToCheck = new ArrayList<>();
+                        while (calendar.get(Calendar.HOUR_OF_DAY) != endTime[0]) {
+                            Log.i("myInfoTag", "Add to timeFieldsToCheck: " + SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
+                            timeFieldsToCheck.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
+                            calendar.add(Calendar.MINUTE, 30);
+                        }
+                        if(endTime[1] == 30){
+                            Log.i("myInfoTag", "Add to timeFieldsToCheck: " + SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
+                            timeFieldsToCheck.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
+                            calendar.add(Calendar.MINUTE, 30);
+                        }
+
+                        Log.i("myInfoTag", "Time Fields: " + timeFieldsToCheck);
+                        // Check each time field from arraylist of generated time fields
                         for (String timeField : timeFieldsToCheck) {
                             // get boolean list of seat availability for a given date and time
                             List<Boolean> seatAvailability = (List<Boolean>) document.get(timeField);
 
                             if (seatAvailability != null) {
-                                // check if seat is still available in next time slot
+                                // check if each seat is currently available and was also previously available
                                 List<Integer> currentlyAvailableSeats = new ArrayList<>();
                                 for (int seat = 0; seat < seatAvailability.size(); seat++) {
+                                    Log.i("myInfoTag", seat + ": " + seatAvailability.get(seat) + " " + availableSeats.contains(seat));
                                     if (seatAvailability.get(seat) && availableSeats.contains(seat)) {
                                         currentlyAvailableSeats.add(seat);
                                     }
                                 }
+                                // update list of available seats
                                 availableSeats = currentlyAvailableSeats;
+
                             }
                         }
 
                         // Output the available seats
                         clearSeatButtons();
-                        for (Integer seat : availableSeats) {
-                            final Button seatButton = new Button(BuildingPage.this);
-                            // check if seat is indoors or outdoors
-                            boolean isIndoors = seatLocations[seat];
-                            String outsideAsterisk = "";
-                            if (!isIndoors) {
-                                outsideAsterisk = "*";
-                            }
-                            int outputSeat = seat+1;
-                            seatButton.setText("Seat " + outputSeat + outsideAsterisk);
-
-                            seatButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    // Deselect all seat buttons
-                                    for (int j = 0; j < seatGrid.getChildCount(); j++) {
-                                        View childView = seatGrid.getChildAt(j);
-                                        if (childView instanceof Button) {
-                                            childView.setSelected(false);
-                                        }
-                                    }
-
-                                    // Select the clicked seat button
-                                    seatButton.setSelected(true);
-
-                                    // Update the selected seat
-                                    selectedSeat = seatButton.getText().toString();
-                                }
-                            });
-
-                            seatButton.setBackgroundResource(R.drawable.seat_button_selector); // Define a selector in your resources
-
-                            seatGrid.addView(seatButton);
+                        // If no seats are available, output a toast saying so
+                        if (availableSeats.isEmpty()) {
+                            Toast.makeText(getApplicationContext(), "No seats are availble at this time, please select a different time.", Toast.LENGTH_LONG).show();
                         }
-                    } else {
-                        Log.i("myInfoTag", "does not exit");
-                        // create new time fields
-                        ArrayList<String> reservationTimeFields = new ArrayList<>();
-                        int closingHourPopulate = closingHour;
-                        if (closingHour > 23) {
-                            closingHourPopulate = 23;
-                        }
-                        // calendar.add will go from 23->0
-                        while (calendar.get(Calendar.HOUR_OF_DAY) < closingHourPopulate) {
-                            reservationTimeFields.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
-                            calendar.add(Calendar.MINUTE, 30);
-                        }
-                        if (closingMinute == 30) {
-                            reservationTimeFields.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
-                            calendar.add(Calendar.MINUTE, 30);
-                        }
-                        if (closingHour == 24) {
-                            int count = 0;
-                            while (count < 2) {
-                                reservationTimeFields.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
-                                calendar.add(Calendar.MINUTE, 30);
-                                count++;
-                            }
+                        else {
+                            updateSeatButtons(availableSeats, true);
                         }
 
-                        // The document does not exist, so create it with the time fields
+                    }
+
+                    /* DOCUMENT DOESN'T EXIST */
+                    /* Date selected not found in current database */
+                    else {
+                        Log.i("myInfoTag", "Document does not exist");
+                        // Populate array of available booking times from start to end time
+                        ArrayList<String> reservationTimeFields= populateReservationTimeFields(startTime);
+
+
+                        // create boolean arrays of size seatNums within new Date Document
                         Map<String, Object> newReservationFields = new HashMap<>();
                         for (String time : reservationTimeFields) {
-                            // Create a boolean array of size numSeats, all set to true initially
                             Boolean[] availability = new Boolean[numSeats];
+                            // set all seats to available
                             Arrays.fill(availability, Boolean.TRUE);
                             newReservationFields.put(time, Arrays.asList(availability));
                         }
 
-                        // Add the new document with the generated fields
-                        db.collection("Building_Info").document(selectedBuilding).collection("reservations").document(selectedDate)
-                                .set(newReservationFields)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.i("myInfoTag", "DocumentSnapshot successfully written!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.i("myInfoTag", "Error writing document", e);
-                                        return;
-                                    }
-                                });
 
-                        clearSeatButtons();
-
+                        // Add the new date document with the generated fields to Firestore
+                        createNewDateDocument(newReservationFields);
                         // Output the available seats
-                        for (int i = 1; i <= numSeats; i++) {
-                            final Button seatButton = new Button(BuildingPage.this);
-
-                            // check if seat is indoors or outdoors
-                            boolean isIndoors = seatLocations[i-1];
-                            String outsideAsterisk = "";
-                            if(!isIndoors){
-                                outsideAsterisk = "*";
-                            }
-                            seatButton.setText("Seat " + i + outsideAsterisk);
-
-                            seatButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    // Deselect all seat buttons
-                                    for (int j = 0; j < seatGrid.getChildCount(); j++) {
-                                        View childView = seatGrid.getChildAt(j);
-                                        if (childView instanceof Button) {
-                                            childView.setSelected(false);
-                                        }
-                                    }
-
-                                    // Select the clicked seat button
-                                    seatButton.setSelected(true);
-
-                                    // Update the selected seat
-                                    selectedSeat = seatButton.getText().toString();
-                                }
-                            });
-
-                            seatButton.setBackgroundResource(R.drawable.seat_button_selector); // Define a selector in your resources
-                            seatGrid.addView(seatButton);
-                        }
-                        selectedDate = null;
+                        clearSeatButtons();
+                        updateSeatButtons(availableSeats, false);
                     }
                 } else {
                     Log.d("myInfoTag", "get failed with ", task.getException());
@@ -540,13 +621,53 @@ public class BuildingPage extends AppCompatActivity {
         });
     }
 
+    private ArrayList<String> populateReservationTimeFields(Date startTime) {
+        // create calendar instance to generate time fields
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startTime);
+
+        ArrayList<String> reservationTimeFields = new ArrayList<>();
+
+
+        int closingHourPopulate = closingHour;
+        if (closingHour > 23) {
+            closingHourPopulate = 23;
+        }
+        Log.i("myInfoTag", "The closing hour is updated from " + closingHour + " to " + closingHourPopulate);
+        // create new time intervals up to closing time or 23
+        while (calendar.get(Calendar.HOUR_OF_DAY) < closingHourPopulate) {
+            Log.i("myInfoTag", "Add to reservationTimeFields: " + SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
+            reservationTimeFields.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
+            calendar.add(Calendar.MINUTE, 30);
+        }
+        // add additional time slot to account for 30 minutes
+        if (closingMinute == 30) {
+            Log.i("myInfoTag", "Add to reservationTimeFields: " + SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
+            reservationTimeFields.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
+            calendar.add(Calendar.MINUTE, 30);
+        }
+        // add 2 aditional time slots to account for 24
+        if (closingHour == 24) {
+            int count = 0;
+            while (count < 2) {
+                Log.i("myInfoTag", "Add to reservationTimeFields: " + SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
+                reservationTimeFields.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
+                calendar.add(Calendar.MINUTE, 30);
+                count++;
+            }
+        }
+        return reservationTimeFields;
+    }
+
+
+
+
     private void openBookingPage() {
-        // check to see if date and seat are selected or else prompt an error message
+        // error handling for empty seat and date
         if(selectedDate == null){
             Toast.makeText(this, "Please select a date", Toast.LENGTH_SHORT).show();
             return;
         }
-
         if(selectedSeat == null){
             Toast.makeText(this, "Please select a seat", Toast.LENGTH_SHORT).show();
             return;
@@ -558,11 +679,15 @@ public class BuildingPage extends AppCompatActivity {
         Log.i("myInfoTag" , "selected start time is:" + selectedStartTime);
         Log.i("myInfoTag" , "selected end time is:" + selectedEndTime);
         Log.i("myInfoTag" , "selected seat is:" + selectedSeat);
+
+        // send data to BookingActivity
         intent.putExtra("selectedDate", selectedDate);
         intent.putExtra("selectedBuilding", selectedBuilding);
         intent.putExtra("selectedStartTime", selectedStartTime);
         intent.putExtra("selectedEndTime", selectedEndTime);
         intent.putExtra("selectedSeat", selectedSeat);
+
+        // start Booking Activity
         startActivity(intent);
     }
 }
