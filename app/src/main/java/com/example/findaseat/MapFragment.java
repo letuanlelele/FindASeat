@@ -375,7 +375,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 intent.putExtra("buildingClosing", buildingInfo.getClosingTime());
                 intent.putExtra("numSeats", buildingInfo.getNum_seats());
                 intent.putExtra("seatLocations", buildingInfo.getSeatLocations());
-                startActivity(intent);
+
+                if (((MainActivity) requireActivity()).isLoggedIn() == true) {
+                    startActivity(intent);
+                }
+                else {
+                    Toast.makeText(getActivity(), "Please log in to see building info", Toast.LENGTH_SHORT).show();
+                }
             }
 
     }

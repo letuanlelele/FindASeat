@@ -148,7 +148,13 @@ private FirebaseFirestore db;
             @Override
             public void onClick(View view) {
                 // Implement booking logic and transition to the booking page
-                openBookingPage();
+                List<Reservation> currReservation = ManageReservationFragment.getCurrentReservationList();
+                if (currReservation.isEmpty()){
+                    openBookingPage();
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "Reservation already exists.", Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

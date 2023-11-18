@@ -223,7 +223,8 @@ public class BookingActivity extends AppCompatActivity {
 
     // Create new reservation in users
     private void updateFirebaseUser(String date, String selectedStartTime, String selectedEndTime, int selectedSeat) {
-        String username = "loaf";
+//        String username = "loaf";
+        String username = MainActivity.getUsername();
         String TAG = "myInfoTag";
 
         // Create map that stores reservation info
@@ -263,9 +264,19 @@ public class BookingActivity extends AppCompatActivity {
 //        fragmentTransaction.replace(R.id.frame_layout, myFragment);
 //        fragmentTransaction.addToBackStack(null);
 //        fragmentTransaction.commit();
+
         Intent intent = new Intent(BookingActivity.this, MainActivity.class);
-        intent.putExtra("isLoggedIn", true);
+
+//        intent.putExtra("isLoggedIn", true);
         startActivity(intent);
+//        MainActivity.setLoggedIn(true);
+//        MainActivity.setUsername(document.getId());
+
+//        ProfileFragment profileFragment = new ProfileFragment();
+//        FragmentManager fragmentManager = getParentFragmentManager();
+//        fragmentManager.beginTransaction()
+//                .replace(R.id.frame_layout, profileFragment)
+//                .commit();
     }
 //    private void goToFragment() {
 //

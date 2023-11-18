@@ -19,10 +19,10 @@ import com.google.firebase.FirebaseApp;
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;    // nav_menu
-    private boolean isLoggedIn = false;
-    private String username;
+    private static boolean isLoggedIn;
+    private static String username;
 
-    public void setLoggedIn(boolean loggedIn) {
+    public static void setLoggedIn(boolean loggedIn) {
         isLoggedIn = loggedIn;
     }
 
@@ -30,11 +30,11 @@ public class MainActivity extends AppCompatActivity {
         return isLoggedIn;
     }
 
-    public void setUsername(String user_name){
+    public static void setUsername(String user_name){
         username = user_name;
     }
 
-    public String getUsername(){
+    public static String getUsername(){
         return username;
     }
 
@@ -63,10 +63,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Firebase
         FirebaseApp.initializeApp(this);
-
-        // google maps
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map);
-//        mapFragment.getMapAsync(this);
     }
 
     // nav_menu
