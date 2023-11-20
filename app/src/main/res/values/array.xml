@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="profile_pictures">
+        <item>Polite Cat</item>
+        <item>Blep Cat</item>
+        <item>Loaf Cat</item>
+        <item>Sandwich Cat</item>
+        <item>Thinker Cat</item>
+    </string-array>
+
+    <string-array name="affiliation">
+        <item>Student</item>
+        <item>Graduate Student</item>
+        <item>Faculty</item>
+        <item>Staff</item>
+    </string-array>
+</resources>

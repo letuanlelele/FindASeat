@@ -60,6 +60,9 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.7.3")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
 
+    implementation("com.squareup.picasso:picasso:2.8")
+
+
 }
 
 //import java.util.*

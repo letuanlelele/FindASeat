@@ -9,4 +9,7 @@
     <string name="current_reservation">Current Reservation</string>
     <string name="edit_reservation">Edit Reservation</string>
     <string name="past_reservations_details">Past reservations details:</string>
+    <string name="create_new_account">Create New Account</string>
+    <string name="select_profile_picture">Select Profile Picture</string>
+    <string name="select_affiliation">Select Your Affiliation</string>
 </resources>

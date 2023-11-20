@@ -72,7 +72,7 @@ public class ManageReservationFragment extends Fragment {
             public void onClick(View v) {
                 new AlertDialog.Builder(requireContext())
                         .setTitle("Confirm Edit")
-                        .setMessage("This will edit your current reservation, you cannot undo this action.")
+                        .setMessage("This will cancel your current reservation and prompt you to create a new one. Continue?")
                         .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -228,7 +228,8 @@ public class ManageReservationFragment extends Fragment {
                 });
     }
 
-    private boolean isCurrentReservation(String dateString, String timeString) {
+    public static boolean isCurrentReservation(String dateString, String timeString) {
+        Log.i("myInfoTag", "Check reservation in Manage Reservation: " + dateString + " " + timeString);
 //        String dateString = date; // Your date string
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");

@@ -121,7 +121,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                 new LatLng(34.025442742634105, -118.28045999644873)        // Top right corner
         );
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(campusBounds, 100));
+        if (!TestUtils.isRunningTest()) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(campusBounds, 100));
+        }
         // Create buildings + Add markers for buildings and set click listeners
         hardCodeBuildings();
 
@@ -189,7 +191,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private void hardCodeBuildings() {
         BuildingInfo building1 = new BuildingInfo();
         building1.setBuilding_id("Leavey");
-        building1.setDescription("Leavey is...");
+        building1.setDescription("Leavey is");
         building1.setLatitude(34.02204048561001);
         building1.setLongitude(-118.28292515212222);
         building1.setOpeningTime(830);

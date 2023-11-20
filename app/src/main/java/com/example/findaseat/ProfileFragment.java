@@ -107,7 +107,7 @@ public class ProfileFragment extends Fragment {
 
     // FIND USER DOCUMENT
     private void startFireStore() {
-        username = ((MainActivity) requireActivity()).getUsername();
+        username = MainActivity.getUsername();
         DocumentReference docRef = db.collection("users").document(username);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -127,7 +127,6 @@ public class ProfileFragment extends Fragment {
                         TextView affiliationTextView = rootView.findViewById(R.id.affiliation);
                         ImageView userImageView = rootView.findViewById(R.id.profile_image);
                         int imageResource = getResources().getIdentifier(userImage, "drawable", requireContext().getPackageName());
-                        //userImageView.setImageResource(R.drawable.cat1);
 
                         String display_uscid = "USC ID: " + USC_id;
 

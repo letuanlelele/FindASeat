@@ -1,6 +1,8 @@
 package com.example.findaseat;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 import static com.example.findaseat.ManageReservationFragment.combineDateAndTime;
+import static com.example.findaseat.ManageReservationFragment.isCurrentReservation;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -8,6 +10,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.View;
@@ -26,12 +30,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -147,16 +153,52 @@ private FirebaseFirestore db;
         findViewById(R.id.bookButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Implement booking logic and transition to the booking page
-                List<Reservation> currReservation = ManageReservationFragment.getCurrentReservationList();
-                if (currReservation.isEmpty()){
-                    openBookingPage();
-                }
-                else{
-                    Toast.makeText(getApplicationContext(), "Reservation already exists.", Toast.LENGTH_LONG).show();
-                }
+
+                // Check if user already has current reservation
+                // If they do, display toast
+                // If they don't, book the reservation
+                checkIfUserAlreadyHasReservation();
             }
         });
+    }
+
+    public void checkIfUserAlreadyHasReservation() {
+            String username = MainActivity.getUsername();
+            List<Integer> tempList = new ArrayList<>();
+            db.collection("users")
+                    .document(username)
+                    .collection("user_reservations")
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    String doc_id = document.getId();
+
+                                    Boolean cancelled = document.getBoolean("cancelled");
+                                    String date = document.getString("date");
+                                    String end_time = document.getString("end_time");
+
+                                    // Figure out if current or past
+                                    Log.i("myInfoTag", "Check reservation for: " + date + " " + end_time);
+                                    if (isCurrentReservation(date, end_time) && cancelled != true) {
+                                        tempList.add(1);
+                                    }
+                                }
+                            } else {
+                                Log.d(TAG, "Error getting documents: ", task.getException());
+                            }
+
+                            if (tempList.isEmpty()) {
+                                openBookingPage();
+                            }
+                            else {
+                                Toast.makeText(getApplicationContext(), "ERROR: You already have a reservation.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
+
     }
 
     private void parseHHMMa(int time, boolean isOpeningTime) {

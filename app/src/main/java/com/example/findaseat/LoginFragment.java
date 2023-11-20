@@ -30,7 +30,6 @@ public class LoginFragment extends Fragment {
 
     private EditText uscidEditText;
     private EditText passwordEditText;
-    private Button loginButton;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference users = db.collection("users");
     private View rootView;
@@ -40,7 +39,8 @@ public class LoginFragment extends Fragment {
         rootView = inflater.inflate(R.layout.login_fragment, container, false);
         uscidEditText = rootView.findViewById(R.id.uscidEditText);
         passwordEditText = rootView.findViewById(R.id.passwordEditText);
-        loginButton = rootView.findViewById(R.id.loginButton);
+        Button loginButton = rootView.findViewById(R.id.loginButton);
+        Button createAccountButtton = rootView.findViewById(R.id.createAccountButton);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,32 +49,25 @@ public class LoginFragment extends Fragment {
                 // Perform login logic here
                 String uscid = uscidEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
-                startFireStore(uscid, password);
-
-
-                // Check login credentials, and if login is successful
-//                if (true) {
-//                    // Navigate to the ProfileFragment or any other fragment
-//                    ((MainActivity) requireActivity()).setLoggedIn(true);
-//
-//                    ProfileFragment profileFragment = new ProfileFragment();
-//                    FragmentManager fragmentManager = getParentFragmentManager();
-//                    fragmentManager.beginTransaction()
-//                            .replace(R.id.frame_layout, profileFragment)
-//                            .commit();
-//                }
-//                else{
-//                    TextView errorMessageTextView = rootView.findViewById(R.id.errorMessage);
-//                    errorMessageTextView.setVisibility(View.VISIBLE);
-//                }
+                loginUser(uscid, password);
             }
         });
 
+        createAccountButtton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CreateAccountFragment createAccountFragment = new CreateAccountFragment();
+                FragmentManager fragmentManager = getParentFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.frame_layout, createAccountFragment)
+                        .commit();
+            }
+        });
         return rootView;
     }
 
     // Example login logic (replace with your actual login logic)
-    private void startFireStore(String uscid, String password) {
+    public void loginUser(String uscid, String password) {
         if (uscid.isEmpty() || password.isEmpty()) {
             // Handle empty fields, show an error message or toast
             //Toast.makeText(getActivity(), "Please enter USC ID and password", Toast.LENGTH_SHORT).show();
@@ -90,12 +83,13 @@ public class LoginFragment extends Fragment {
                         if (document.exists()) {
                             Log.d(TAG, "Found document");
                             String temp = document.getString("password");
+                            assert temp != null;
                             if (temp.equals(password)) {
                                 //Toast.makeText(getActivity(), "password is valid", Toast.LENGTH_SHORT).show();
                                 // Check password successful, implement logic for successful login HERE
                                 // Consider calling a function here that does post-login logic
-                                ((MainActivity) requireActivity()).setLoggedIn(true);
-                                ((MainActivity) requireActivity()).setUsername(document.getId());
+                                MainActivity.setLoggedIn(true);
+                                MainActivity.setUsername(document.getId());
                                 ProfileFragment profileFragment = new ProfileFragment();
                                 FragmentManager fragmentManager = getParentFragmentManager();
                                 fragmentManager.beginTransaction()
