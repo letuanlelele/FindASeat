@@ -14,7 +14,7 @@ To provide you with the best information, here are the details of our Android em
 ```xml
 <meta-data
     android:name="com.google.android.geo.API_KEY"
-    android:value="AIzaSyBZwfBY8CkpD05pli49Jwu9GBuCkWz_MTE P"></meta-data>
+    android:value="AIzaSyBZwfBY8CkpD05pli49Jwu9GBuCkWz_MTE"></meta-data>
 ```
 
 ## Project Status
