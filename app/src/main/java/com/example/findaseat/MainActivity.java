@@ -18,6 +18,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.firebase.FirebaseApp;
 
+import java.util.Map;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,12 +61,19 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if (!TestUtils.isRunningTest()) {
-            replaceFragment(new MapFragment());
+//        if (!TestUtils.isRunningTest()) {
+//            replaceFragment(new MapFragment());
+//        }
+//        else {
+//            replaceFragment(new LoginFragment());
+//        }
+        if (isLoggedIn()) {
+            replaceFragment(new ProfileFragment());
         }
         else {
-            replaceFragment(new LoginFragment());
+            replaceFragment(new MapFragment());
         }
+
 
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -81,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-//        replaceFragment(new MapFragment());
+
 
         // Firebase
         FirebaseApp.initializeApp(this);

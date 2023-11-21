@@ -17,7 +17,7 @@ public class ReservationTest {
     private String status;
     private Timestamp timestamp;
 
-    private String doc_id;
+    private String doc_id = "Leavey";
     private boolean cancelled = false;
 
     @Test
@@ -69,14 +69,6 @@ public class ReservationTest {
     }
 
     @Test
-    public void getStatus() {
-    }
-
-    @Test
-    public void setStatus() {
-    }
-
-    @Test
     public void setTimestamp() {
     }
 
@@ -86,10 +78,16 @@ public class ReservationTest {
 
     @Test
     public void getDoc_id() {
+        Reservation obj = new Reservation(start_time, end_time, date, location, seat, status, timestamp, doc_id, cancelled);
+        Assert.assertEquals("Test getDoc_id", doc_id, obj.getDoc_id());
     }
 
     @Test
     public void setDoc_id() {
+        Reservation obj = new Reservation(start_time, end_time, date, location, seat, status, timestamp, doc_id, cancelled);
+        String test = "test";
+        obj.setDoc_id(test);
+        Assert.assertEquals("Test setDoc_id", test, obj.getDoc_id());
     }
 
     @Test

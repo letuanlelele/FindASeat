@@ -82,14 +82,20 @@ public class BookingActivity extends AppCompatActivity {
         // Split "Seat 2" string
         Log.i("myInfoTag", "Check 4");
 
-        if (!TestUtils.isRunningTest()) {
-            int seatNum = parseSelectedSeat(selectedSeat);
+//        if (!TestUtils.isRunningTest()) {
+//            int seatNum = parseSelectedSeat(selectedSeat);
+//
+//            // Call firebase function here
+//            Log.i("myInfoTag", "Check 5");
+//            updateFirebaseBuilding(selectedDate, selectedStartTime, selectedEndTime, seatNum);
+//            updateFirebaseUser(selectedDate, selectedStartTime, selectedEndTime, seatNum);
+//        }
+        int seatNum = parseSelectedSeat(selectedSeat);
 
-            // Call firebase function here
-            Log.i("myInfoTag", "Check 5");
-            updateFirebaseBuilding(selectedDate, selectedStartTime, selectedEndTime, seatNum);
-            updateFirebaseUser(selectedDate, selectedStartTime, selectedEndTime, seatNum);
-        }
+        // Call firebase function here
+        Log.i("myInfoTag", "Check 5");
+        updateFirebaseBuilding(selectedDate, selectedStartTime, selectedEndTime, seatNum);
+        updateFirebaseUser(selectedDate, selectedStartTime, selectedEndTime, seatNum);
 
 
 
@@ -97,10 +103,6 @@ public class BookingActivity extends AppCompatActivity {
         returnToMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                LoginFragment loginFragment = new LoginFragment();
-//                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-//                transaction.replace(R.id.frame_layout, loginFragment);
-//                transaction.commit();
                 returnToMap();
             }
         });
@@ -263,30 +265,10 @@ public class BookingActivity extends AppCompatActivity {
                 });
     }
 
-    private void returnToMap(){
-//        MapFragment myFragment = new MapFragment();
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.frame_layout, myFragment);
-//        fragmentTransaction.addToBackStack(null);
-//        fragmentTransaction.commit();
-
+    private void returnToMap() {
         Intent intent = new Intent(BookingActivity.this, MainActivity.class);
-
-//        intent.putExtra("isLoggedIn", true);
         startActivity(intent);
-//        MainActivity.setLoggedIn(true);
-//        MainActivity.setUsername(document.getId());
-
-//        ProfileFragment profileFragment = new ProfileFragment();
-//        FragmentManager fragmentManager = getParentFragmentManager();
-//        fragmentManager.beginTransaction()
-//                .replace(R.id.frame_layout, profileFragment)
-//                .commit();
     }
-//    private void goToFragment() {
-//
-//    }
 }
 
 
