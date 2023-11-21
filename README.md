@@ -30,6 +30,7 @@ To provide you with the best information, here are the details of our Android em
 For your convenience, we have provided login credentials to access our reservation information:
 
 Username: [loaf, thinker, blep, sandwich, polite]
+
 Password: [loafcat, thinker, blepcat, sandwichcat, politecat]
 
 
