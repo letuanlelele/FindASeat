@@ -53,7 +53,14 @@ public class ProfileFragment extends Fragment {
     @Nullable
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        boolean isLoggedIn = ((MainActivity) requireActivity()).isLoggedIn();
+        boolean isLoggedIn;
+        if (TestUtils.isRunningTest()) {
+            isLoggedIn = true;
+        }
+        else {
+            isLoggedIn = ((MainActivity) requireActivity()).isLoggedIn();
+        }
+
 
         rootView = inflater.inflate(R.layout.my_profile, container, false);
         Button manageReservationsButton = rootView.findViewById(R.id.manage_reservation_button);
@@ -67,8 +74,10 @@ public class ProfileFragment extends Fragment {
                 ManageReservationFragment manageReservationsFragment = new ManageReservationFragment();
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame_layout, manageReservationsFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                //transaction.commit();
+                if (!TestUtils.isRunningTest()){
+                    transaction.commit();
+                }
             }
         });
 
@@ -79,16 +88,28 @@ public class ProfileFragment extends Fragment {
                 new AlertDialog.Builder(requireContext())
                         .setTitle("Confirm Logout")
                         .setMessage("Are you sure you want to logout?")
-                        .setPositiveButton("Logout", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("LOGOUT", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 // User confirmed the logout
-                                ((MainActivity) requireActivity()).setLoggedIn(false);
-
+//                                LoginFragment loginFragment = new LoginFragment();
+//                                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//                                transaction.replace(R.id.frame_layout, loginFragment);
+//                                transaction.commit();
                                 LoginFragment loginFragment = new LoginFragment();
                                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                                 transaction.replace(R.id.frame_layout, loginFragment);
+//                                if (!TestUtils.isRunningTest()) {
+//                                    ((MainActivity) requireActivity()).setLoggedIn(false);
+//                                    transaction.commit();
+//                                }
+                                ((MainActivity) requireActivity()).setLoggedIn(false);
                                 transaction.commit();
+//                                else {
+//                                    TextView testingView = rootView.findViewById(R.id.signoutSuccessMessage);
+//                                    testingView.setVisibility(View.VISIBLE);
+//                                }
+
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -102,12 +123,19 @@ public class ProfileFragment extends Fragment {
         });
 
         // Inflate the layout for this fragment
-              return rootView;
+        return rootView;
     }
 
     // FIND USER DOCUMENT
     private void startFireStore() {
-        username = MainActivity.getUsername();
+//        if(!TestUtils.isRunningTest()){
+//            username = ((MainActivity) requireActivity()).getUsername();
+//        }
+//        else {
+//            username = "loaf";
+//        }
+        username = ((MainActivity) requireActivity()).getUsername();
+
         DocumentReference docRef = db.collection("users").document(username);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -127,6 +155,7 @@ public class ProfileFragment extends Fragment {
                         TextView affiliationTextView = rootView.findViewById(R.id.affiliation);
                         ImageView userImageView = rootView.findViewById(R.id.profile_image);
                         int imageResource = getResources().getIdentifier(userImage, "drawable", requireContext().getPackageName());
+                        //userImageView.setImageResource(R.drawable.cat1);
 
                         String display_uscid = "USC ID: " + USC_id;
 

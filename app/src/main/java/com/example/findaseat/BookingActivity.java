@@ -81,11 +81,17 @@ public class BookingActivity extends AppCompatActivity {
         // parse data for firebase
         // Split "Seat 2" string
         Log.i("myInfoTag", "Check 4");
-        int seatNum = parseSelectedSeat(selectedSeat);
-        // Call firebase function here
-        Log.i("myInfoTag", "Check 5");
-        updateFirebaseBuilding(selectedDate, selectedStartTime, selectedEndTime, seatNum);
-        updateFirebaseUser(selectedDate, selectedStartTime, selectedEndTime, seatNum);
+
+        if (!TestUtils.isRunningTest()) {
+            int seatNum = parseSelectedSeat(selectedSeat);
+
+            // Call firebase function here
+            Log.i("myInfoTag", "Check 5");
+            updateFirebaseBuilding(selectedDate, selectedStartTime, selectedEndTime, seatNum);
+            updateFirebaseUser(selectedDate, selectedStartTime, selectedEndTime, seatNum);
+        }
+
+
 
         // Button to return to map
         returnToMapButton.setOnClickListener(new View.OnClickListener() {

@@ -2,7 +2,6 @@ package com.example.findaseat;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 import static com.example.findaseat.ManageReservationFragment.combineDateAndTime;
-import static com.example.findaseat.ManageReservationFragment.isCurrentReservation;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -198,7 +197,37 @@ private FirebaseFirestore db;
                             }
                         }
                     });
+    }
 
+    private boolean isCurrentReservation(String dateString, String timeString) {
+//        String dateString = date; // Your date string
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
+
+        try {
+            Date date = dateFormat.parse(dateString);
+            Date time = timeFormat.parse(timeString);
+            Date currentDateTime = new Date(); // Get the current date
+            Date targetDateTime = combineDateAndTime(date, time);
+            Log.i("myInfoTag", "dateString: " + dateString);
+            Log.i("myInfoTag", "parsed date: " + String.valueOf(date));
+            Log.i("myInfoTag", "timeString " + timeString);
+            Log.i("myInfoTag", "parsed time " + String.valueOf(time));
+            Log.i("myInfoTag", "Target date is: " + String.valueOf(targetDateTime));
+            Log.i("myInfoTag", "Current date is: " + String.valueOf(currentDateTime));
+
+
+            if (targetDateTime.before(currentDateTime)) {
+                System.out.println("The given date and time is in the past.");
+                return false;
+            }
+            else {
+                return true;
+            }
+        } catch (ParseException e) {
+            System.out.println("Invalid date format: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     private void parseHHMMa(int time, boolean isOpeningTime) {

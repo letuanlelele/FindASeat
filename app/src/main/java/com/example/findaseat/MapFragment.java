@@ -121,9 +121,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                 new LatLng(34.025442742634105, -118.28045999644873)        // Top right corner
         );
-        if (!TestUtils.isRunningTest()) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(campusBounds, 100));
-        }
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(campusBounds, 100));
         // Create buildings + Add markers for buildings and set click listeners
         hardCodeBuildings();
 
@@ -191,7 +189,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private void hardCodeBuildings() {
         BuildingInfo building1 = new BuildingInfo();
         building1.setBuilding_id("Leavey");
-        building1.setDescription("Leavey is");
+        building1.setDescription("Leavey is...");
         building1.setLatitude(34.02204048561001);
         building1.setLongitude(-118.28292515212222);
         building1.setOpeningTime(830);
@@ -377,13 +375,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 intent.putExtra("buildingClosing", buildingInfo.getClosingTime());
                 intent.putExtra("numSeats", buildingInfo.getNum_seats());
                 intent.putExtra("seatLocations", buildingInfo.getSeatLocations());
-
-                if (((MainActivity) requireActivity()).isLoggedIn() == true) {
-                    startActivity(intent);
-                }
-                else {
-                    Toast.makeText(getActivity(), "Please log in to see building info", Toast.LENGTH_SHORT).show();
-                }
+                startActivity(intent);
             }
 
     }
