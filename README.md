@@ -33,6 +33,23 @@ Username: [loaf, thinker, blep, sandwich, polite]
 
 Password: [loafcat, thinker, blepcat, sandwichcat, politecat]
 
+## Sprint Summary (2.5)
+Additional features implemented:
+- If no seats are available at specific time, display a toast saying there are no seats instead of just showing a blank page
+- Email verification when creating account
+
+Bug fixes:
+- BUG: app crashing when trying to book a reservation while logged out
+- BUG: log in → book reservation → log out → book reservation → ERROR: “you already have a reservation” message shown
+- BUG: log in → cancel reservation → log out → book reservation → ERROR: confirmation page shown AND app crashes
+- BUG: Create account: selecting cat image always results in thinker cat
+- BUG: After booking a reservation and click on “Return to map”, app sometimes crashes
+- BUG: When creating account, user can enter an invalid USC ID
+- BUG: If you don’t have a current reservation and you try to click on “Cancel Reservation”, the app crashes
+- BUG: Do not allow a user to book a reservation in the past.
+- BUG: click “Modify Reservation” → click “Cancel” → ERROR: “Current Reservation” field displays two duplicate reservations
+
+
 
 Please don't hesitate to reach out if you have any questions.
 
