@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
@@ -51,7 +52,6 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-//    implementation ("androidx.annotation:annotation:1.2.0")
     implementation ("androidx.annotation:annotation:1.7.0")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation ("com.google.firebase:firebase-firestore:24.9.1")
@@ -62,6 +62,13 @@ dependencies {
 
     implementation("com.squareup.picasso:picasso:2.8")
 
+
+    // NEW FOR ESPRESSO //
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test:rules:1.5.0")
+    debugImplementation("androidx.fragment:fragment-testing:1.6.2")
+
+    testImplementation ("org.mockito:mockito-core:5.7.0")
 
 }
 

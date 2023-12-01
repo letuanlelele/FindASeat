@@ -1,10 +1,18 @@
-# README
-
-Hi Brian,
-
-I hope you are doing well. We want to express our gratitude for your support and understanding throughout our project, and your guidance has been invaluable for us.
+# FindASeat
+Now that everyone is back on campus, people are having a hard time finding a table to study or work at.
+FindASeat is an app that helps them find available seats on campus and reserve them in advance
 
 ## Emulator Setup
+
+To run the project:
+- Open the project in Android Studio
+- Click on "Tools" and navigate to "Firebase" in Android Studio
+- Click "Authentication," then choose "Authenticate using a custom authentication system," and click "Connect your app to Firebase"
+- Click "Cloud Storage for Database," then select "Get Started with Cloud Storage," and click "Connect your app to Firebase"
+- Ensure that you are set to start using FindASeat
+
+Requirements:
+Device: Use the Pixel 2 API 24 to run this app
 
 To provide you with the best information, here are the details of our Android emulator setup:
 
@@ -14,25 +22,18 @@ To provide you with the best information, here are the details of our Android em
 ```xml
 <meta-data
     android:name="com.google.android.geo.API_KEY"
-    android:value="AIzaSyBZwfBY8CkpD05pli49Jwu9GBuCkWz_MTE P"></meta-data>
+    android:value="AIzaSyBZwfBY8CkpD05pli49Jwu9GBuCkWz_MTE"></meta-data>
 ```
-
-## Project Status
-
-We want to be transparent about our current project status. Due to miscommunication, a few parts of our project still need to be fully integrated. We are actively working to resolve these issues during the testing phase. Unfortunately, one of our team members faced a laptop breakdown and had to use our laptop to implement her functionalities, which reduced the time we could work on the project. Your understanding and patience during this time are greatly appreciated.
 
 ## Login Information
 
 For your convenience, we have provided login credentials to access our reservation information:
 
-Username: loaf
+Username: [loaf, thinker, blep, sandwich, polite]
 
-Password: loafcat
-
-Please don't hesitate to reach out if you have any questions. Thank you for your continued support and understanding.
+Password: [loafcat, thinker, blepcat, sandwichcat, politecat]
 
 
-
-Best regards,
+Please don't hesitate to reach out if you have any questions.
 
 Minh, Tuan, and Nikki

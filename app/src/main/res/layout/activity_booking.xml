@@ -50,7 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="Return to map"
+        android:text="Return to profile"
         android:textAlignment="center"/>
     <FrameLayout
         android:id="@+id/frame_layout"

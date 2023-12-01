@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ProfileFragment">
 
-    <!-- USCID EditText -->
+    <!-- USCID/username EditText -->
     <EditText
         android:id="@+id/uscidEditText"
         android:layout_width="0dp"
@@ -67,6 +67,19 @@
         android:text="Invalid USCID or password"
         android:textSize="18sp"
         android:textColor="#FF0000"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginButton"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/successMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login success"
+        android:textSize="18sp"
+        android:textColor="#FFFFFF"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -17,7 +17,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.firebase.FirebaseApp;
-import com.squareup.picasso.Picasso;
+
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         isLoggedIn = loggedIn;
     }
 
-    public boolean isLoggedIn() {
+    public static boolean isLoggedIn() {
         return isLoggedIn;
     }
 
@@ -59,7 +60,21 @@ public class MainActivity extends AppCompatActivity {
         // nav_menu
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        replaceFragment(new MapFragment());
+
+//        if (!TestUtils.isRunningTest()) {
+//            replaceFragment(new MapFragment());
+//        }
+//        else {
+//            replaceFragment(new LoginFragment());
+//        }
+        if (isLoggedIn()) {
+            replaceFragment(new ProfileFragment());
+        }
+        else {
+            replaceFragment(new MapFragment());
+        }
+
+
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
@@ -75,13 +90,14 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
+
+
         // Firebase
         FirebaseApp.initializeApp(this);
     }
 
     // nav_menu
     private void replaceFragment(Fragment fragment) {
-
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);

@@ -121,32 +121,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                 new LatLng(34.025442742634105, -118.28045999644873)        // Top right corner
         );
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(campusBounds, 100));
         if (!TestUtils.isRunningTest()) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(campusBounds, 100));
         }
         // Create buildings + Add markers for buildings and set click listeners
         hardCodeBuildings();
-
     }
 
 
 
-
-
-
-
-    /////////////// FIRESTORE SHIT ///////////////
-    // Access a Cloud Firestore instance from your Activity
-
-
-//    private void insertLeavey() {
-//        Map<String, Object> data1 = new HashMap<>();
-//        data1.put("building_id", "Leavey");
-//        data1.put("description", "sad ass library");
-//        data1.put("latitude", 34.02204048561001);
-//        data1.put("longitude", -118.28292515212222);
-//        BuildingInfo.document("Leavey").set(data1);
-//    }
 
     private void startFireStore() {
         BuildingInfo
@@ -191,7 +175,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private void hardCodeBuildings() {
         BuildingInfo building1 = new BuildingInfo();
         building1.setBuilding_id("Leavey");
-        building1.setDescription("Leavey is");
+        building1.setDescription("Leavey is...");
         building1.setLatitude(34.02204048561001);
         building1.setLongitude(-118.28292515212222);
         building1.setOpeningTime(830);
@@ -336,37 +320,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void handleBuildingClick(String buildingId) {
-//        // If user is NOT logged in
-//        if (((MainActivity) requireActivity()).isLoggedIn() == false) {
-//            // Create a new BottomSheetDialog
-//            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
-//            View view = LayoutInflater.from(getContext()).inflate(R.layout.building_info_layout, null);
-//            bottomSheetDialog.setContentView(view);
-//
-//            // Set the building's information to the views
-//            TextView nameTextView = view.findViewById(R.id.building_name);
-//            nameTextView.setText("Please log in to view building information.");
-//
-////            TextView descriptionTextView = view.findViewById(R.id.building_description);
-////            descriptionTextView.setText(buildingInfo.getDescription());
-//
-//            // Show the BottomSheetDialog
-//            bottomSheetDialog.show();
-//        }
-//        else {
-//            BuildingInfo buildingInfo = buildingInfoMap.get(buildingId);
-//            if (buildingInfo != null) {
-//
-//                Intent intent = new Intent(getActivity(), BuildingPage.class);
-//                intent.putExtra("buildingID", buildingInfo.getBuilding_id());
-//                intent.putExtra("buildingDescription", buildingInfo.getDescription());
-//                intent.putExtra("buildingOpening", buildingInfo.getOpeningTime());
-//                intent.putExtra("buildingClosing", buildingInfo.getClosingTime());
-//                intent.putExtra("numSeats", buildingInfo.getNum_seats());
-//                intent.putExtra("seatLocations", buildingInfo.getSeatLocations());
-//                startActivity(intent);
-//            }
-//        }
         BuildingInfo buildingInfo = buildingInfoMap.get(buildingId);
             if (buildingInfo != null) {
 
@@ -377,86 +330,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 intent.putExtra("buildingClosing", buildingInfo.getClosingTime());
                 intent.putExtra("numSeats", buildingInfo.getNum_seats());
                 intent.putExtra("seatLocations", buildingInfo.getSeatLocations());
-
-                if (((MainActivity) requireActivity()).isLoggedIn() == true) {
-                    startActivity(intent);
-                }
-                else {
-                    Toast.makeText(getActivity(), "Please log in to see building info", Toast.LENGTH_SHORT).show();
-                }
+                startActivity(intent);
             }
 
     }
-
-
-    public class BuildingInfo {
-        private String building_id;
-        private String description;
-        private double latitude;
-        private double longitude;
-        private int opening_time;
-        private int closing_time;
-        private int num_seats;
-        private boolean[] locations;
-
-        // Empty constructor for Firestore
-        public BuildingInfo() {}
-
-        public String getBuilding_id() {
-            return building_id;
-        }
-
-        public void setBuilding_id(String building_id) {
-            this.building_id = building_id;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public double getLatitude() {
-            return latitude;
-        }
-
-        public void setLatitude(double latitude) {
-            this.latitude = latitude;
-        }
-
-        public double getLongitude() {
-            return longitude;
-        }
-
-        public void setLongitude(double longitude) {
-            this.longitude = longitude;
-        }
-
-        public int getOpeningTime() { return opening_time; }
-
-        public void setOpeningTime(int opening_time) { this.opening_time = opening_time; }
-
-        public int getClosingTime() { return closing_time; }
-
-        public void setClosingTime(int closing_time) { this.closing_time = closing_time; }
-
-        public int getNum_seats() {
-            return num_seats;
-        }
-
-        public void setNum_seats(int num_seats) {
-            this.num_seats = num_seats;
-        }
-
-        public void setSeatLocations(boolean[] locations) {
-            this.locations = locations;
-        }
-
-        public boolean[] getSeatLocations(){
-            return locations;
-        }
-    }
-
 }
