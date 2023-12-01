@@ -321,7 +321,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private void handleBuildingClick(String buildingId) {
         BuildingInfo buildingInfo = buildingInfoMap.get(buildingId);
-            if (buildingInfo != null) {
+            if (buildingInfo != null && MainActivity.isLoggedIn()) {
 
                 Intent intent = new Intent(getActivity(), BuildingPage.class);
                 intent.putExtra("buildingID", buildingInfo.getBuilding_id());
@@ -331,6 +331,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 intent.putExtra("numSeats", buildingInfo.getNum_seats());
                 intent.putExtra("seatLocations", buildingInfo.getSeatLocations());
                 startActivity(intent);
+            }
+            else {
+                Toast.makeText(getActivity(), "ERROR: Please log in before trying to book a reservation.", Toast.LENGTH_SHORT).show();
             }
 
     }

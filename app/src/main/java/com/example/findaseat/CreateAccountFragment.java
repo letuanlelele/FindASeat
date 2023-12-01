@@ -17,9 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
-import  com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -27,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -34,16 +33,18 @@ public class CreateAccountFragment extends Fragment {
 
     private View rootView;
     private EditText name;
-    private EditText username;
+    private EditText email;
     private EditText USCID;
     private Spinner affiliation;
     private EditText password;
     private EditText confirmPassword;
     private Spinner profilePicture;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    public CreateAccountFragment(){
+
+    public CreateAccountFragment() {
 
     }
+
     @Override
     @Nullable
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,7 +52,7 @@ public class CreateAccountFragment extends Fragment {
         rootView = inflater.inflate(R.layout.create_account_fragment, container, false);
 
         name = rootView.findViewById(R.id.newName);
-        username = rootView.findViewById(R.id.newUsername);
+        email = rootView.findViewById(R.id.newUsername);
         USCID = rootView.findViewById(R.id.newUSCID);
         affiliation = rootView.findViewById(R.id.newAffiliation);
         password = rootView.findViewById(R.id.newPasswordEditText);
@@ -65,7 +66,7 @@ public class CreateAccountFragment extends Fragment {
                 // Handle create account button click here
                 // Perform account creation logic here
                 String newName = name.getText().toString();
-                String newUsername = username.getText().toString();
+                String newEmail = email.getText().toString();
                 String newUSCID = USCID.getText().toString();
                 String newAffiliation = affiliation.getSelectedItem().toString();
                 String newPassword = password.getText().toString();
@@ -73,7 +74,7 @@ public class CreateAccountFragment extends Fragment {
                 String newProfilePicture = profilePicture.getSelectedItem().toString();
                 String selectedProfilePicture = convertCat(newProfilePicture);
 
-                createNewUserInFirestore(newName, newUsername, newUSCID, newAffiliation, newPassword, newConfirmPassword, selectedProfilePicture);
+                createNewUserInFirestore(newName, newEmail, newUSCID, newAffiliation, newPassword, newConfirmPassword, selectedProfilePicture);
             }
         });
 
@@ -81,19 +82,15 @@ public class CreateAccountFragment extends Fragment {
     }
 
     public String convertCat(String catName) {
-        if(catName == "Polite Cat"){
+        if (Objects.equals(catName, "Polite Cat")) {
             return "cat1";
-        }
-        else if(catName == "Blep Cat"){
+        } else if (Objects.equals(catName, "Blep Cat")) {
             return "cat2";
-        }
-        else if(catName == "Loaf Cat"){
+        } else if (Objects.equals(catName, "Loaf Cat")) {
             return "cat3";
-        }
-        else if(catName == "Sandwich Cat"){
+        } else if (Objects.equals(catName, "Sandwich Cat")) {
             return "cat4";
-        }
-        else {
+        } else {
             return "cat5";
         }
     }
@@ -109,13 +106,29 @@ public class CreateAccountFragment extends Fragment {
         doc.set(data);
     }
 
-    private void createNewUserInFirestore(String name, String username, String uscID, String affiliation, String password, String confirmPassword, String profilePicture){
+    private void createNewUserInFirestore(String name, String username, String uscID, String affiliation, String password, String confirmPassword, String profilePicture) {
         String TAG = "myInfoTag";
         // Check that there are no blank fields
         if (name.isEmpty() || username.isEmpty() || uscID.isEmpty() || affiliation.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             Toast.makeText(getActivity(), "Please fill in all fields", Toast.LENGTH_SHORT).show();
             TextView errorMessageTextView = rootView.findViewById(R.id.errorCreateAccountMessage);
             errorMessageTextView.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        // Check if email id usc.edu
+        if (!username.contains("usc.edu")){
+            Toast.makeText(getActivity(), "Invalid email, please enter USC email", Toast.LENGTH_SHORT).show();
+            TextView errorMessageTextView = rootView.findViewById(R.id.errorCreateAccountMessage);
+            errorMessageTextView.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        // Check if USCID is 10 digits
+        if (uscID.length() != 10) {
+            Toast.makeText(getActivity(), "USCID must be 10 digits", Toast.LENGTH_SHORT).show();
+            TextView errormessageTextView = rootView.findViewById(R.id.errorCreateAccountMessage);
+            errormessageTextView.setVisibility(View.VISIBLE);
             return;
         }
 
@@ -138,13 +151,11 @@ public class CreateAccountFragment extends Fragment {
                         Toast.makeText(getActivity(), "User or username already taken, please retry.", Toast.LENGTH_SHORT).show();
                         TextView errorMessageTextView = rootView.findViewById(R.id.errorCreateAccountMessage);
                         errorMessageTextView.setVisibility(View.VISIBLE);
-                    }
-                    else {
+                    } else {
                         setNewUserInfo(docRef, name, username, uscID, affiliation, password, confirmPassword, profilePicture);
                         if (!TestUtils.isRunningTest()) {
                             loginUser(username, password);
-                        }
-                        else {
+                        } else {
                             TextView errorMessageTextView = rootView.findViewById(R.id.successCreateAccountMessage);
                             errorMessageTextView.setVisibility(View.VISIBLE);
                         }
@@ -180,7 +191,7 @@ public class CreateAccountFragment extends Fragment {
                             fragmentManager.beginTransaction()
                                     .replace(R.id.frame_layout, profileFragment)
                                     .commit();
-                        } else{
+                        } else {
                             TextView errorMessageTextView = rootView.findViewById(R.id.errorMessage);
                             errorMessageTextView.setVisibility(View.VISIBLE);
                         }

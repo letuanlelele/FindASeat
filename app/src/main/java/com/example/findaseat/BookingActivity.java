@@ -10,16 +10,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
-import com.example.findaseat.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.core.Tag;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
@@ -42,12 +37,7 @@ import java.util.regex.Pattern;
 
 public class BookingActivity extends AppCompatActivity {
 
-    private TextView dateTextView;
-    private TextView seatTextView;
-    private TextView timeTextView;
-    private View returnToMapButton;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference users = db.collection("BuildingInfo");
     private String selectedBuilding;
     private String username;
 
@@ -58,10 +48,10 @@ public class BookingActivity extends AppCompatActivity {
 
         // get page xml and text views
         setContentView(R.layout.activity_booking);
-        dateTextView = findViewById(R.id.dateTextView);
-        seatTextView = findViewById(R.id.seatTextView);
-        timeTextView = findViewById(R.id.timeTextView);
-        returnToMapButton = findViewById(R.id.returnToMapButton);
+        TextView dateTextView = findViewById(R.id.dateTextView);
+        TextView seatTextView = findViewById(R.id.seatTextView);
+        TextView timeTextView = findViewById(R.id.timeTextView);
+        View returnToMapButton = findViewById(R.id.returnToMapButton);
 
         Log.i("myInfoTag", "Check 2");
         // get data from BuildingPage Activity
@@ -119,6 +109,7 @@ public class BookingActivity extends AppCompatActivity {
 
         // Use Calendar to convert the Date into hours and minutes
         Calendar calendar = Calendar.getInstance();
+        assert date != null;
         calendar.setTime(date);
 
         // Extract the HOUR_OF_DAY and MINUTE fields
@@ -185,6 +176,7 @@ public class BookingActivity extends AppCompatActivity {
                                     // generate list of times to update availability
                                     ArrayList<String> timeFieldsToCheck = new ArrayList<>();
                                     Calendar calendar = Calendar.getInstance();
+                                    assert startTime != null;
                                     calendar.setTime(startTime);
                                     while (calendar.get(Calendar.HOUR_OF_DAY) != endTime[0]) {
                                         Log.i("myInfoTag", "Adding in Booking: " + SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
@@ -203,6 +195,7 @@ public class BookingActivity extends AppCompatActivity {
                                         // get boolean list at timeField
                                         List<Boolean> seatAvailability = (List<Boolean>) document.get(timeField);
                                         // set seat as unavailable
+                                        assert seatAvailability != null;
                                         seatAvailability.set(selectedSeat-1, false);
 
                                         // update document in Firestore
@@ -231,7 +224,6 @@ public class BookingActivity extends AppCompatActivity {
 
     // Create new reservation in users
     private void updateFirebaseUser(String date, String selectedStartTime, String selectedEndTime, int selectedSeat) {
-//        String username = "loaf";
         String username = MainActivity.getUsername();
         String TAG = "myInfoTag";
 

@@ -214,6 +214,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -268,40 +269,44 @@ public class ManageReservationFragment extends Fragment {
         editReservationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(requireContext())
-                        .setTitle("Confirm Edit")
-                        .setMessage("This will cancel your current reservation and prompt you to create a new one. Continue?")
-                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Reservation currReservation = currentReservationList.get(0);
-                                cancelReservationUser(currReservation);
-                                //
-                                cancelReservationBuilding(currReservation);
-                                ManageReservationFragment.removeCurrentReservation();
+                if (currentReservationList.isEmpty()) {
+                    Toast.makeText(getActivity(), "There is no active reservation", Toast.LENGTH_SHORT).show();
+                } else {
+                    new AlertDialog.Builder(requireContext())
+                            .setTitle("Confirm Edit")
+                            .setMessage("This will cancel your current reservation and prompt you to create a new one. Continue?")
+                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Reservation currReservation = currentReservationList.get(0);
+                                    cancelReservationUser(currReservation);
+                                    //
+                                    cancelReservationBuilding(currReservation);
+                                    ManageReservationFragment.removeCurrentReservation();
 
-                                new AlertDialog.Builder(requireContext())
-                                        .setTitle("Edit Reservation Action")
-                                        .setMessage("Please select the building for your reservation.")
-                                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                MapFragment mapFragment = new MapFragment();
-                                                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                                                transaction.replace(R.id.frame_layout, mapFragment);
-                                                transaction.commit();
-                                            }
-                                        })
-                                        .show();
-                            }
-                        })
-                        .setNegativeButton("Return", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                                    new AlertDialog.Builder(requireContext())
+                                            .setTitle("Edit Reservation Action")
+                                            .setMessage("Please select the building for your reservation.")
+                                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    MapFragment mapFragment = new MapFragment();
+                                                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                                                    transaction.replace(R.id.frame_layout, mapFragment);
+                                                    transaction.commit();
+                                                }
+                                            })
+                                            .show();
+                                }
+                            })
+                            .setNegativeButton("Return", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
-                            }
-                        })
-                        .show();
+                                }
+                            })
+                            .show();
+                }
             }
         });
         // Initialize the RecyclerView for current and past
@@ -323,42 +328,46 @@ public class ManageReservationFragment extends Fragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(requireContext())
-                        .setTitle("Confirm Cancel")
-                        .setMessage("Are you sure you want to cancel?")
-                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // Get current reservation here
-                                // pass in current reservation and update username in function
-                                Reservation currReservation = currentReservationList.get(0);
-                                cancelReservationUser(currReservation);
-                                //
-                                cancelReservationBuilding(currReservation);
-                                ManageReservationFragment.removeCurrentReservation();
+                if (currentReservationList.isEmpty()) {
+                    Toast.makeText(getActivity(), "There is no active reservation", Toast.LENGTH_SHORT).show();
+                } else {
+                    new AlertDialog.Builder(requireContext())
+                            .setTitle("Confirm Cancel")
+                            .setMessage("Are you sure you want to cancel?")
+                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Get current reservation here
+                                    // pass in current reservation and update username in function
+                                    Reservation currReservation = currentReservationList.get(0);
+                                    cancelReservationUser(currReservation);
+                                    //
+                                    cancelReservationBuilding(currReservation);
+                                    ManageReservationFragment.removeCurrentReservation();
 
-                                new AlertDialog.Builder(requireContext())
-                                        .setTitle("Reservation Cancelled")
-                                        .setMessage("Your reservation has been cancel.")
-                                        .setPositiveButton("Return", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                ProfileFragment profileFragment = new ProfileFragment();
-                                                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                                                transaction.replace(R.id.frame_layout, profileFragment);
-                                                transaction.commit();
-                                            }
-                                        })
-                                        .show();
-                            }
-                        })
-                        .setNegativeButton("Return", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                                    new AlertDialog.Builder(requireContext())
+                                            .setTitle("Reservation Cancelled")
+                                            .setMessage("Your reservation has been cancel.")
+                                            .setPositiveButton("Return", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    ProfileFragment profileFragment = new ProfileFragment();
+                                                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                                                    transaction.replace(R.id.frame_layout, profileFragment);
+                                                    transaction.commit();
+                                                }
+                                            })
+                                            .show();
+                                }
+                            })
+                            .setNegativeButton("Return", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
-                            }
-                        })
-                        .show();
+                                }
+                            })
+                            .show();
+                }
             }
         });
 
@@ -366,7 +375,7 @@ public class ManageReservationFragment extends Fragment {
     }
 
     private void showReservations() {
-        username = ((MainActivity) requireActivity()).getUsername();
+        username = MainActivity.getUsername();
 
         RecyclerView currentRecyclerView = rootView.findViewById(R.id.currentReservationRecyclerView);
         currentRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));

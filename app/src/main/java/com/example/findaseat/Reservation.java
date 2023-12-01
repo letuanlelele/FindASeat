@@ -34,11 +34,13 @@ public class Reservation {
         this.start_time = start_time;
     }
 
-    public String getEndTime(){
+    public String getEndTime() {
         return end_time;
     }
 
-    public void setEndTime(){ this.end_time = end_time; }
+    public void setEndTime() {
+        this.end_time = end_time;
+    }
 
     public String getDate() {
         return date;
@@ -75,10 +77,10 @@ public class Reservation {
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
+
     public Timestamp getTimestamp() {
         return timestamp;
     }
-
 
 
     public String getDoc_id() {
@@ -93,7 +95,7 @@ public class Reservation {
         return cancelled;
     }
 
-    public void setCancelled(boolean cancelled){
+    public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
 }

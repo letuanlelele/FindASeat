@@ -9,8 +9,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.View;
@@ -19,8 +17,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.GridLayout;
-import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,12 +25,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -53,11 +46,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 
-
 public class BuildingPage extends AppCompatActivity {
-//    private FirebaseFirestore db = FirebaseFirestore.getInstance();
-private FirebaseFirestore db;
-
+    private FirebaseFirestore db;
     private int numSeats;
     private int openingHour;
     private String stringOpeningMinute;
@@ -70,7 +60,6 @@ private FirebaseFirestore db;
     private int closingMinute;
     private String stringClosingMinute;
     private boolean[] seatLocations;
-
     private Button datePickerButton;
     private Spinner startTimeSpinner;
     private Spinner endTimeSpinner;
@@ -83,7 +72,6 @@ private FirebaseFirestore db;
     private String selectedDate;
 
     List<Integer> availableSeats;
-
 
 
     @Override
@@ -122,10 +110,6 @@ private FirebaseFirestore db;
         TextView buildingClosingTextView = findViewById(R.id.buildingClosingText);
         buildingClosingTextView.setText("Closing Time: " + closingHour12H + ":" + stringClosingMinute + closingAmPm);
 
-
-
-
-
         datePickerButton = findViewById(R.id.datePickerButton);
         startTimeSpinner = findViewById(R.id.startTimeSpinner);
         endTimeSpinner = findViewById(R.id.endTimeSpinner);
@@ -152,51 +136,56 @@ private FirebaseFirestore db;
         findViewById(R.id.bookButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                // Implement booking logic and transition to the booking page
+                List<Reservation> currReservation = ManageReservationFragment.getCurrentReservationList();
+                if (currReservation.isEmpty()) {
+                    openBookingPage();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Reservation already exists.", Toast.LENGTH_LONG).show();
+                }
                 // Check if user already has current reservation
                 // If they do, display toast
                 // If they don't, book the reservation
-                checkIfUserAlreadyHasReservation();
+                //checkIfUserAlreadyHasReservation();
             }
         });
     }
 
     public void checkIfUserAlreadyHasReservation() {
-            String username = MainActivity.getUsername();
-            List<Integer> tempList = new ArrayList<>();
-            db.collection("users")
-                    .document(username)
-                    .collection("user_reservations")
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    String doc_id = document.getId();
+        String username = MainActivity.getUsername();
+        List<Integer> tempList = new ArrayList<>();
+        db.collection("users")
+                .document(username)
+                .collection("user_reservations")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String doc_id = document.getId();
 
-                                    Boolean cancelled = document.getBoolean("cancelled");
-                                    String date = document.getString("date");
-                                    String end_time = document.getString("end_time");
+                                Boolean cancelled = document.getBoolean("cancelled");
+                                String date = document.getString("date");
+                                String end_time = document.getString("end_time");
 
-                                    // Figure out if current or past
-                                    Log.i("myInfoTag", "Check reservation for: " + date + " " + end_time);
-                                    if (isCurrentReservation(date, end_time) && cancelled != true) {
-                                        tempList.add(1);
-                                    }
+                                // Figure out if current or past
+                                Log.i("myInfoTag", "Check reservation for: " + date + " " + end_time);
+                                if (isCurrentReservation(date, end_time) && cancelled != true) {
+                                    tempList.add(1);
                                 }
-                            } else {
-                                Log.d(TAG, "Error getting documents: ", task.getException());
                             }
-
-                            if (tempList.isEmpty()) {
-                                openBookingPage();
-                            }
-                            else {
-                                Toast.makeText(getApplicationContext(), "ERROR: You already have a reservation.", Toast.LENGTH_LONG).show();
-                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
                         }
-                    });
+
+                        if (tempList.isEmpty()) {
+                            openBookingPage();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "ERROR: You already have a reservation.", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
     }
 
     private boolean isCurrentReservation(String dateString, String timeString) {
@@ -220,8 +209,7 @@ private FirebaseFirestore db;
             if (targetDateTime.before(currentDateTime)) {
                 System.out.println("The given date and time is in the past.");
                 return false;
-            }
-            else {
+            } else {
                 return true;
             }
         } catch (ParseException e) {
@@ -233,9 +221,9 @@ private FirebaseFirestore db;
     private void parseHHMMa(int time, boolean isOpeningTime) {
         if (isOpeningTime) {
             // set hour value
-            openingHour = (time/100);
-            openingHour12H = (time/100)%12;
-            if(openingHour12H == 0){
+            openingHour = (time / 100);
+            openingHour12H = (time / 100) % 12;
+            if (openingHour12H == 0) {
                 openingHour12H = 12;
             }
 
@@ -243,31 +231,30 @@ private FirebaseFirestore db;
             openingMinute = time % 100;
             stringOpeningMinute = Integer.toString(openingMinute);
 
-            if(openingMinute == 0){
+            if (openingMinute == 0) {
                 stringOpeningMinute = "00";
             }
             // set am or pm value
             openingAmPm = "am";
-            if(openingHour != 24 && openingHour > 11){
+            if (openingHour != 24 && openingHour > 11) {
                 openingAmPm = "pm";
             }
-        }
-        else {
+        } else {
             // set hour value
-            closingHour = (time/100);
-            closingHour12H = closingHour%12;
-            if(closingHour12H == 0){
+            closingHour = (time / 100);
+            closingHour12H = closingHour % 12;
+            if (closingHour12H == 0) {
                 closingHour12H = 12;
             }
             // set minute value
             closingMinute = time % 100;
             stringClosingMinute = Integer.toString(closingMinute);
-            if(closingMinute == 0){
+            if (closingMinute == 0) {
                 stringClosingMinute = "00";
             }
             // set am or pm value
             closingAmPm = "am";
-            if(closingHour != 24 && closingHour > 11){
+            if (closingHour != 24 && closingHour > 11) {
                 closingAmPm = "pm";
             }
         }
@@ -315,13 +302,13 @@ private FirebaseFirestore db;
 
             // if current > closing
             // toast "can't book"
-            if(currentDateTime.compareTo(closingDateTime) > 0) {
+            if (currentDateTime.compareTo(closingDateTime) > 0) {
                 Toast.makeText(getApplicationContext(), "This building is closed for today. Please select a different date.", Toast.LENGTH_LONG).show();
             }
 
             int result = currentDateTime.compareTo(openingDateTime);
             // currentDateTime < openingDateTime
-            if(result < 0){
+            if (result < 0) {
                 calendar.set(Calendar.HOUR_OF_DAY, openingHour);
                 calendar.set(Calendar.MINUTE, openingMinute);
 
@@ -329,8 +316,8 @@ private FirebaseFirestore db;
             // openingDateTime < currentDateTime
             else {
                 // round up to next hour
-                if(calendar.get(Calendar.MINUTE) > 29){
-                    calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY)+1);
+                if (calendar.get(Calendar.MINUTE) > 29) {
+                    calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) + 1);
                     calendar.set(Calendar.MINUTE, 0);
                 }
                 // round up to next 30 minutes
@@ -343,6 +330,7 @@ private FirebaseFirestore db;
             throw new RuntimeException(e);
         }
     }
+
     private void populateTimeSpinners() {
         // Example: Populate time intervals starting at 9:00 AM and ending at 5:00 PM with 30-minute intervals
         List<String> timeIntervals = new ArrayList<>();
@@ -353,7 +341,7 @@ private FirebaseFirestore db;
 
         // populate the start time intervals
         int closingHourPopulate = closingHour;
-        if(closingHour > 23){
+        if (closingHour > 23) {
             closingHourPopulate = 23;
         }
         // calendar.add will go from 23->0
@@ -361,13 +349,13 @@ private FirebaseFirestore db;
             timeIntervals.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
             calendar.add(Calendar.MINUTE, 30);
         }
-        if(closingMinute == 30){
+        if (closingMinute == 30) {
             timeIntervals.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
             calendar.add(Calendar.MINUTE, 30);
         }
-        if(closingHour == 24){
+        if (closingHour == 24) {
             int count = 0;
-            while(count < 2){
+            while (count < 2) {
                 timeIntervals.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
                 calendar.add(Calendar.MINUTE, 30);
                 count++;
@@ -386,7 +374,7 @@ private FirebaseFirestore db;
                 selectedStartTime = timeAdapter.getItem(position);
 
                 // Update the end time spinner based on the selected start time
-                 populateEndTimeSpinner(finalClosingHourPopulate);
+                populateEndTimeSpinner(finalClosingHourPopulate);
             }
 
             @Override
@@ -428,11 +416,11 @@ private FirebaseFirestore db;
             count++;
         }
         // account for 2300 to 0000 change
-        if(calendar.get(Calendar.HOUR_OF_DAY) == 23 && closingHour == 23 && closingMinute == 30){
+        if (calendar.get(Calendar.HOUR_OF_DAY) == 23 && closingHour == 23 && closingMinute == 30) {
             calendar.add(Calendar.MINUTE, 30);
             endTimeIntervals.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
         }
-        if(closingHour == 24){
+        if (closingHour == 24) {
             while (calendar.get(Calendar.HOUR_OF_DAY) != 0 && count < 3) {
                 calendar.add(Calendar.MINUTE, 30);
                 endTimeIntervals.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
@@ -480,9 +468,6 @@ private FirebaseFirestore db;
         return new int[]{hourOfDay, minutes};
     }
 
-//    public int add(int num1, int num2)
-
-
     /* SEAT BUTTON FUNCTIONS */
     private void clearSeatButtons() {
         if (seatGrid != null) {
@@ -513,22 +498,21 @@ private FirebaseFirestore db;
 
                 updateSeatButtonsHelper(seatButton);
             }
-        }
-        else {
-                for (int i = 1; i <= numSeats; i++) {
-                    // create new buttons
-                    final Button seatButton = new Button(BuildingPage.this);
+        } else {
+            for (int i = 1; i <= numSeats; i++) {
+                // create new buttons
+                final Button seatButton = new Button(BuildingPage.this);
 
-                    // check if seat is indoors or outdoors
-                    boolean isIndoors = seatLocations[i-1];
-                    String outsideAsterisk = "";
-                    if(!isIndoors){
-                        outsideAsterisk = "*";
-                    }
-                    seatButton.setText("Seat " + i + outsideAsterisk);
-
-                    updateSeatButtonsHelper(seatButton);
+                // check if seat is indoors or outdoors
+                boolean isIndoors = seatLocations[i - 1];
+                String outsideAsterisk = "";
+                if (!isIndoors) {
+                    outsideAsterisk = "*";
                 }
+                seatButton.setText("Seat " + i + outsideAsterisk);
+
+                updateSeatButtonsHelper(seatButton);
+            }
         }
     }
 
@@ -593,7 +577,7 @@ private FirebaseFirestore db;
         int[] endTime;
         try {
             endTime = convertTo24HourFormat(selectedEndTime);
-        } catch (ParseException e){
+        } catch (ParseException e) {
             Log.i("myInfoTag", String.valueOf(e));
             return;
         }
@@ -628,7 +612,7 @@ private FirebaseFirestore db;
                             timeFieldsToCheck.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
                             calendar.add(Calendar.MINUTE, 30);
                         }
-                        if(endTime[1] == 30){
+                        if (endTime[1] == 30) {
                             Log.i("myInfoTag", "Add to timeFieldsToCheck: " + SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
                             timeFieldsToCheck.add(SimpleDateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime()));
                             calendar.add(Calendar.MINUTE, 30);
@@ -660,8 +644,7 @@ private FirebaseFirestore db;
                         // If no seats are available, output a toast saying so
                         if (availableSeats.isEmpty()) {
                             Toast.makeText(getApplicationContext(), "No seats are availble at this time, please select a different time.", Toast.LENGTH_LONG).show();
-                        }
-                        else {
+                        } else {
                             updateSeatButtons(availableSeats, true);
                         }
 
@@ -672,7 +655,7 @@ private FirebaseFirestore db;
                     else {
                         Log.i("myInfoTag", "Document does not exist");
                         // Populate array of available booking times from start to end time
-                        ArrayList<String> reservationTimeFields= populateReservationTimeFields(startTime);
+                        ArrayList<String> reservationTimeFields = populateReservationTimeFields(startTime);
 
 
                         // create boolean arrays of size seatNums within new Date Document
@@ -737,25 +720,23 @@ private FirebaseFirestore db;
     }
 
 
-
-
     private void openBookingPage() {
         // error handling for empty seat and date
-        if(selectedDate == null){
+        if (selectedDate == null) {
             Toast.makeText(this, "Please select a date", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(selectedSeat == null){
+        if (selectedSeat == null) {
             Toast.makeText(this, "Please select a seat", Toast.LENGTH_SHORT).show();
             return;
         }
 
         Intent intent = new Intent(BuildingPage.this, BookingActivity.class);
-        Log.i("myInfoTag" , "selected date is:" + selectedDate);
-        Log.i("myInfoTag" , "selected building is:" +selectedBuilding);
-        Log.i("myInfoTag" , "selected start time is:" + selectedStartTime);
-        Log.i("myInfoTag" , "selected end time is:" + selectedEndTime);
-        Log.i("myInfoTag" , "selected seat is:" + selectedSeat);
+        Log.i("myInfoTag", "selected date is:" + selectedDate);
+        Log.i("myInfoTag", "selected building is:" + selectedBuilding);
+        Log.i("myInfoTag", "selected start time is:" + selectedStartTime);
+        Log.i("myInfoTag", "selected end time is:" + selectedEndTime);
+        Log.i("myInfoTag", "selected seat is:" + selectedSeat);
 
         // send data to BookingActivity
         intent.putExtra("selectedDate", selectedDate);

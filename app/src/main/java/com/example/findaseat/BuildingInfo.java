@@ -22,7 +22,8 @@ public class BuildingInfo {
     }
 
     // Empty constructor for Firestore
-    public BuildingInfo() {}
+    public BuildingInfo() {
+    }
 
 
     public String getBuilding_id() {
@@ -57,13 +58,21 @@ public class BuildingInfo {
         this.longitude = longitude;
     }
 
-    public int getOpeningTime() { return opening_time; }
+    public int getOpeningTime() {
+        return opening_time;
+    }
 
-    public void setOpeningTime(int opening_time) { this.opening_time = opening_time; }
+    public void setOpeningTime(int opening_time) {
+        this.opening_time = opening_time;
+    }
 
-    public int getClosingTime() { return closing_time; }
+    public int getClosingTime() {
+        return closing_time;
+    }
 
-    public void setClosingTime(int closing_time) { this.closing_time = closing_time; }
+    public void setClosingTime(int closing_time) {
+        this.closing_time = closing_time;
+    }
 
     public int getNum_seats() {
         return num_seats;
@@ -77,7 +86,7 @@ public class BuildingInfo {
         this.locations = locations;
     }
 
-    public boolean[] getSeatLocations(){
+    public boolean[] getSeatLocations() {
         return locations;
     }
 }

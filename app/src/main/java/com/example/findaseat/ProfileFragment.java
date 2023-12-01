@@ -4,12 +4,10 @@ import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
@@ -19,11 +17,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -43,7 +39,6 @@ public class ProfileFragment extends Fragment {
     private String userImage;
     private View rootView;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference users = db.collection("users");
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -56,9 +51,8 @@ public class ProfileFragment extends Fragment {
         boolean isLoggedIn;
         if (TestUtils.isRunningTest()) {
             isLoggedIn = true;
-        }
-        else {
-            isLoggedIn = ((MainActivity) requireActivity()).isLoggedIn();
+        } else {
+            isLoggedIn = MainActivity.isLoggedIn();
         }
 
 
@@ -75,7 +69,7 @@ public class ProfileFragment extends Fragment {
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
                 transaction.replace(R.id.frame_layout, manageReservationsFragment);
                 //transaction.commit();
-                if (!TestUtils.isRunningTest()){
+                if (!TestUtils.isRunningTest()) {
                     transaction.commit();
                 }
             }
@@ -103,7 +97,7 @@ public class ProfileFragment extends Fragment {
 //                                    ((MainActivity) requireActivity()).setLoggedIn(false);
 //                                    transaction.commit();
 //                                }
-                                ((MainActivity) requireActivity()).setLoggedIn(false);
+                                MainActivity.setLoggedIn(false);
                                 transaction.commit();
 //                                else {
 //                                    TextView testingView = rootView.findViewById(R.id.signoutSuccessMessage);
@@ -128,13 +122,7 @@ public class ProfileFragment extends Fragment {
 
     // FIND USER DOCUMENT
     private void startFireStore() {
-//        if(!TestUtils.isRunningTest()){
-//            username = ((MainActivity) requireActivity()).getUsername();
-//        }
-//        else {
-//            username = "loaf";
-//        }
-        username = ((MainActivity) requireActivity()).getUsername();
+        username = MainActivity.getUsername();
 
         DocumentReference docRef = db.collection("users").document(username);
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

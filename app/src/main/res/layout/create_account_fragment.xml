@@ -22,7 +22,7 @@
         android:id="@+id/newUsername"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Enter Username"
+        android:hint="Enter USC Email"
         android:inputType="text"
         app:layout_constraintTop_toBottomOf="@id/newName"
         app:layout_constraintStart_toStartOf="parent"

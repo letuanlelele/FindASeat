@@ -61,12 +61,7 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        if (!TestUtils.isRunningTest()) {
-//            replaceFragment(new MapFragment());
-//        }
-//        else {
-//            replaceFragment(new LoginFragment());
-//        }
+        // check logged in in order to determine which fragment to switch to
         if (isLoggedIn()) {
             replaceFragment(new ProfileFragment());
         }
@@ -103,21 +98,6 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
     }
-//    private ImageView imageView;
-//
-//        @Override
-//        protected void onCreate(Bundle savedInstanceState) {
-//            super.onCreate(savedInstanceState);
-//            setContentView(R.layout.activity_image);
-//
-//            imageView = findViewById(R.id.imageView);
-//
-//            // Replace "YOUR_IMAGE_URL" with the actual URL of the image you want to display
-//            String imageUrl = "https://upload.wikimedia.org/wikipedia/commons/2/25/Siam_lilacpoint.jpg";
-//
-//            // Use Picasso to load the image asynchronously
-//            Picasso.get().load(imageUrl).into(imageView);
-//        }
 }
 
 
