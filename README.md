@@ -1,3 +1,5 @@
+Toast.makeText(getActivity(), "ERROR: Please log in before trying to book a reservation.", Toast.LENGTH_SHORT).show();
+
 # FindASeat
 Now that everyone is back on campus, people are having a hard time finding a table to study or work at.
 FindASeat is an app that helps them find available seats on campus and reserve them in advance
