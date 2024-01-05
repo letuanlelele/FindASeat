@@ -53,4 +53,4 @@ Bug fixes:
 
 Please don't hesitate to reach out if you have any questions.
 
-Minh, Tuan, and Nikki
+Tuan, Minh, and Nikki
